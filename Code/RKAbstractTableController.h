@@ -174,6 +174,7 @@ typedef NSUInteger RKTableControllerState;
 @property (nonatomic, assign) BOOL autoRefreshFromNetwork;
 @property (nonatomic, assign) NSTimeInterval autoRefreshRate;
 
+- (void)loadTableWithRequest:(NSURLRequest *)request;
 - (void)cancelLoad;
 - (BOOL)isAutoRefreshNeeded;
 

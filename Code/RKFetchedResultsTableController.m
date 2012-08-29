@@ -226,6 +226,16 @@
     return _fetchRequest ? _fetchRequest : self.fetchedResultsController.fetchRequest;
 }
 
+- (id)objectRequestOperationWithRequest:(NSURLRequest *)request
+{
+    RKHTTPRequestOperation *requestOperation = [[RKHTTPRequestOperation alloc] initWithRequest:request];
+    RKManagedObjectRequestOperation *operation = [[RKManagedObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
+    operation.managedObjectContext = self.managedObjectContext;
+    operation.fetchRequestBlocks = self.fetchRequestBlocks;
+    operation.managedObjectCache = self.managedObjectCache;
+    return operation;
+}
+
 - (void)loadTable
 {
     NSAssert(self.fetchRequest || self.request, @"Cannot load a fetch results table without a request or a fetch request");
@@ -236,6 +246,10 @@
             fetchRequest = fetchRequestBlock(self.request.URL);
             if (fetchRequest) break;
         }
+    }
+    
+    if (! fetchRequest) {
+        NSLog(@"BREAKPOINT");
     }
     NSAssert(fetchRequest, @"Failed to find a fetchRequest for URL: %@", self.request.URL);
     self.fetchRequest = fetchRequest;
@@ -269,10 +283,8 @@
     // is accurate when computing the table view data source responses
     [self.tableView reloadData];
 
-    if ([self isAutoRefreshNeeded] && [self isOnline] &&
-        [self.objectRequestOperation isReady] ) { //&&
-//        ![self.objectLoader.queue containsRequest:self.objectLoader]) {
-        [self performSelector:@selector(loadTableFromNetwork) withObject:nil afterDelay:0];
+    if ([self isAutoRefreshNeeded] && [self isOnline]) {
+        [self loadTableWithRequest:self.request];
     }
 }
 
@@ -296,23 +308,6 @@
     NSAssert(self.sortComparator == nil, @"Attempted to create a sectioned fetchedResultsController when a sortComparator is present");
     _sectionNameKeyPath = sectionNameKeyPath;
 }
-
-//- (void)setResourcePath:(NSString *)resourcePath
-//{
-//    [_resourcePath release];
-//    _resourcePath = [resourcePath copy];
-//    
-//    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:self.objectManager.baseURL relativeToURL:resourcePath]];
-//    self.objectRequestOperation = [self.objectManager objectRequestOperationWithRequest:request success:nil failure:nil];
-//}
-//
-//- (void)setObjectMappingForClass:(Class)objectClass
-//{
-////    NSParameterAssert(objectClass != NULL);
-////    NSAssert(self.objectLoader != NULL, @"Resource path (and thus object loader) must be set before setting object mapping.");
-////    NSAssert(self.objectManager != NULL, @"Object manager must exist before setting object mapping.");
-////    self.objectLoader.objectMapping = [self.objectManager.mappingProvider objectMappingForClass:objectClass];
-//}
 
 #pragma mark - Managing Sections
 
@@ -538,16 +533,6 @@
         return nil;
     }
 }
-
-//#pragma mark - Network Table Loading
-//
-//- (void)loadTableFromNetwork
-//{
-//    NSAssert(self.objectManager, @"Cannot perform a network load without an object manager");
-//    NSAssert(self.objectRequestOperation, @"Cannot perform a network load when a network load is already in-progress");
-//    RKLogTrace(@"About to loadTableWithObjectLoader...");
-//    [self loadTableWithObjectLoader:self.objectRequestOperation];
-//}
 
 #pragma mark - KVO & Model States
 

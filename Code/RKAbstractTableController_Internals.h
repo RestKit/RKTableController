@@ -76,4 +76,6 @@
  */
 - (BOOL)isConsideredEmpty;
 
+- (id)objectRequestOperationWithRequest:(NSURLRequest *)request;
+
 @end

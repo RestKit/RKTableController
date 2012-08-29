@@ -73,10 +73,8 @@ static CGFloat const kDefaultTriggerViewHeight = 64.f;
 
 - (void)refreshLastUpdatedDate
 {
-
-    SEL lastUpdatedSelector = @selector(pullToRefreshDataSourceLastUpdated:);
-    if (self.scrollView.delegate && [self.scrollView.delegate respondsToSelector:lastUpdatedSelector]) {
-        NSDate *date = [self.scrollView.delegate performSelector:lastUpdatedSelector withObject:self];
+    if (self.scrollView.delegate && [self.scrollView.delegate respondsToSelector:@selector(pullToRefreshDataSourceLastUpdated:)]) {
+        NSDate *date = [self.scrollView.delegate performSelector:@selector(pullToRefreshDataSourceLastUpdated:) withObject:self];
         if (!date)
             return;
         NSString *lastUpdatedText = [NSString stringWithFormat:@"Last Updated: %@", [self.dateFormatter stringFromDate:date]];

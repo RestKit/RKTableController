@@ -20,6 +20,7 @@
 
 #import <CoreData/CoreData.h>
 #import "RKAbstractTableController.h"
+#import "RKManagedObjectCaching.h"
 
 typedef UIView *(^RKFetchedResultsTableViewViewForHeaderInSectionBlock)(NSUInteger sectionIndex, NSString *sectionTitle);
 
@@ -44,6 +45,7 @@ typedef UIView *(^RKFetchedResultsTableViewViewForHeaderInSectionBlock)(NSUInteg
 
 // Fetched Results Controller
 @property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, weak) id<RKManagedObjectCaching> managedObjectCache;
 @property (nonatomic, strong) NSArray *fetchRequestBlocks; // An array of blocks for determining the fetch request for a URL
 @property (nonatomic, strong) NSURLRequest *request;
 @property (nonatomic, strong) NSFetchRequest *fetchRequest;

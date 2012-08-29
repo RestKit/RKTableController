@@ -48,6 +48,12 @@
 @synthesize managesCellAttributes = _managesCellAttributes;
 @synthesize mutablePrepareCellBlocks = _mutablePrepareCellBlocks;
 
++ (id)mappingForClass:(Class)objectClass
+{
+    NSAssert([objectClass isSubclassOfClass:[UITableViewCell class]], @"Cell mappings can only target classes that inherit from UITableViewCell");
+    return [super mappingForClass:objectClass];
+}
+
 + (id)cellMapping
 {
     return [self mappingForClass:[UITableViewCell class]];
@@ -67,18 +73,10 @@
     return cellMapping;
 }
 
-+ (id)cellMappingUsingBlock:(void (^)(RKTableViewCellMapping *))block
-{
-    RKTableViewCellMapping *cellMapping = [self cellMapping];
-    block(cellMapping);
-    return cellMapping;
-}
-
 - (id)init
 {
     self = [super init];
     if (self) {
-        self.cellClass = [UITableViewCell class];
         self.style = UITableViewCellStyleDefault;
         self.managesCellAttributes = NO;
         _accessoryType = UITableViewCellAccessoryNone;
@@ -138,32 +136,6 @@
 {
     self.managesCellAttributes = YES;
     _accessoryType = accessoryType;
-}
-
-//- (void)setObjectClass:(Class)objectClass
-//{
-//    NSAssert([objectClass isSubclassOfClass:[UITableViewCell class]], @"Cell mappings can only target classes that inherit from UITableViewCell");
-//    [super setObjectClass:objectClass];
-//}
-
-//- (void)setCellClass:(Class)cellClass
-//{
-//    [self setObjectClass:cellClass];
-//}
-
-- (NSString *)cellClassName
-{
-    return NSStringFromClass(self.cellClass);
-}
-
-- (void)setCellClassName:(NSString *)cellClassName
-{
-    self.cellClass = NSClassFromString(cellClassName);
-}
-
-- (Class)cellClass
-{
-    return [self objectClass];
 }
 
 - (NSString *)reuseIdentifier

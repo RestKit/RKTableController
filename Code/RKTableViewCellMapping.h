@@ -39,26 +39,6 @@
 @interface RKTableViewCellMapping : RKObjectMapping
 
 /**
- The UITableViewCell subclass that this mapping will target. This
- is an alias for the objectClass property defined on the base mapping
- provided here to make things more explicit.
-
- @default [GGImageButtonTableViewCell class]
- @see objectClass
- */
-@property (nonatomic, weak) Class cellClass;
-
-/**
- Convenience accessor for setting the cellClass attribute via a string
- rather than a class instance. This will typically save you from having
- to #import the header file for your target cells in your table view controller
-
- @default @"GGImageButtonTableViewCell"
- @see cellClass
- */
-@property (nonatomic, weak) NSString *cellClassName;
-
-/**
  A reuse identifier for cells created using this mapping. These cells will be
  dequeued and reused within the table view for optimal performance. By default,
  a reuseIdentifier is set for you when you assign an object class to the mapping.
@@ -198,12 +178,6 @@
 + (id)defaultCellMapping;
 
 /**
- Returns a new auto-released object mapping targeting UITableViewCell. The mapping
- will be yielded to the block for configuration.
- */
-+ (id)cellMappingUsingBlock:(void (^)(RKTableViewCellMapping *cellMapping))block;
-
-/**
  Sets up default mappings connecting common properties to their UITableViewCell counterparts as follows:
 
      [self mapKeyPath:@"text" toAttribute:@"textLabel.text"];
@@ -223,13 +197,5 @@
  */
 - (void)addPrepareCellBlock:(void (^)(UITableViewCell *cell))block;
 @property (weak, nonatomic, readonly) NSArray *prepareCellBlocks;
-
-/** @name Configuring Control Actions */
-// TODO: Docs!!!
-
-- (void)addTarget:(id)target action:(SEL)action forControlEvents:(UIControlEvents)controlEvents toControlAtKeyPath:(NSString *)keyPath;
-- (void)addTarget:(id)target action:(SEL)action forTouchEventToControlAtKeyPath:(NSString *)keyPath;
-- (void)addBlockAction:(void (^)(id sender))block forControlEvents:(UIControlEvents)controlEvents toControlAtKeyPath:(NSString *)keyPath;
-- (void)addBlockAction:(void (^)(id sender))block forTouchEventToControlAtKeyPath:(NSString *)keyPath;
 
 @end

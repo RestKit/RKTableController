@@ -15,39 +15,43 @@
 
 @implementation RKObjectManager (RKTableController)
 
-//- (RKTableController *)tableControllerForTableViewController:(UITableViewController *)tableViewController
-//{
-//    RKTableController *tableController = [RKTableController tableControllerForTableViewController:tableViewController];
-//    tableController.responseDescriptors = self.responseDescriptors;
-//    tableController.operationQueue = self.operationQueue;
-//    return tableController;
-//}
-//
-//- (RKTableController *)tableControllerWithTableView:(UITableView *)tableView forViewController:(UIViewController *)viewController
-//{
-//    RKTableController *tableController = [RKTableController tableControllerWithTableView:tableView forViewController:viewController];
-//    tableController.responseDescriptors = self.responseDescriptors;
-//    tableController.operationQueue = self.operationQueue;
-//    return tableController;
-//}
-//
-//- (RKFetchedResultsTableController *)fetchedResultsTableControllerForTableViewController:(UITableViewController *)tableViewController
-//{
-//    RKFetchedResultsTableController *tableController = [RKFetchedResultsTableController tableControllerForTableViewController:tableViewController];
-//    tableController.responseDescriptors = self.responseDescriptors;
-//    tableController.managedObjectContext = self.managedObjectStore.mainQueueManagedObjectContext;
-//    tableController.operationQueue = self.operationQueue;
-//    return tableController;
-//}
-//
-//- (RKFetchedResultsTableController *)fetchedResultsTableControllerWithTableView:(UITableView *)tableView forViewController:(UIViewController *)viewController
-//{
-//    RKFetchedResultsTableController *tableController = [RKFetchedResultsTableController tableControllerWithTableView:tableView forViewController:viewController];
-//    tableController.responseDescriptors = self.responseDescriptors;
-//    tableController.managedObjectContext = self.managedObjectStore.mainQueueManagedObjectContext;
-//    tableController.operationQueue = self.operationQueue;
-//    return tableController;
-//}
+- (RKTableController *)tableControllerForTableViewController:(UITableViewController *)tableViewController
+{
+    RKTableController *tableController = [RKTableController tableControllerForTableViewController:tableViewController];
+    tableController.responseDescriptors = self.responseDescriptors;
+    tableController.operationQueue = self.operationQueue;
+    return tableController;
+}
+
+- (RKTableController *)tableControllerWithTableView:(UITableView *)tableView forViewController:(UIViewController *)viewController
+{
+    RKTableController *tableController = [RKTableController tableControllerWithTableView:tableView forViewController:viewController];
+    tableController.responseDescriptors = self.responseDescriptors;
+    tableController.operationQueue = self.operationQueue;
+    return tableController;
+}
+
+- (RKFetchedResultsTableController *)fetchedResultsTableControllerForTableViewController:(UITableViewController *)tableViewController
+{
+    RKFetchedResultsTableController *tableController = [RKFetchedResultsTableController tableControllerForTableViewController:tableViewController];
+    tableController.responseDescriptors = self.responseDescriptors;
+    tableController.managedObjectContext = self.managedObjectStore.mainQueueManagedObjectContext;
+    tableController.managedObjectCache = self.managedObjectStore.managedObjectCache;
+    tableController.operationQueue = self.operationQueue;
+    tableController.fetchRequestBlocks = self.fetchRequestBlocks;
+    return tableController;
+}
+
+- (RKFetchedResultsTableController *)fetchedResultsTableControllerWithTableView:(UITableView *)tableView forViewController:(UIViewController *)viewController
+{
+    RKFetchedResultsTableController *tableController = [RKFetchedResultsTableController tableControllerWithTableView:tableView forViewController:viewController];
+    tableController.responseDescriptors = self.responseDescriptors;
+    tableController.managedObjectContext = self.managedObjectStore.mainQueueManagedObjectContext;
+    tableController.managedObjectCache = self.managedObjectStore.managedObjectCache;
+    tableController.operationQueue = self.operationQueue;
+    tableController.fetchRequestBlocks = self.fetchRequestBlocks;
+    return tableController;
+}
 
 @end
 

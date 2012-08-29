@@ -109,9 +109,7 @@
 + (id)tableItemWithCellClass:(Class)tableViewCellSubclass
 {
     RKTableItem *tableItem = [self tableItem];
-    tableItem.cellMapping = [RKTableViewCellMapping cellMapping];
-    tableItem.cellMapping.cellClass = tableViewCellSubclass;
-
+    tableItem.cellMapping = [RKTableViewCellMapping mappingForClass:tableViewCellSubclass];
     return tableItem;
 }
 

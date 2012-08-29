@@ -247,27 +247,6 @@
     [self loadTableItems:tableItems inSection:0];
 }
 
-#pragma mark - Network Table Loading
-
-- (void)loadTableWithRequest:(NSURLRequest *)request
-{
-    // Cancel any existing load
-    [self.objectRequestOperation cancel];
-    
-    RKHTTPRequestOperation *requestOperation = [[RKHTTPRequestOperation alloc] initWithRequest:request];
-    RKObjectRequestOperation *objectRequestOperation = [[RKObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
-    
-    if (self.operationQueue) {
-        [self.operationQueue addOperation:objectRequestOperation];
-    } else {
-        RKLogWarning(@"No operation queue configured: starting operation unqueued");
-        [objectRequestOperation start];
-    }
-    
-    self.request = request;
-    self.objectRequestOperation = objectRequestOperation;
-}
-
 #pragma mark - UITableViewDataSource methods
 
 - (void)tableView:(UITableView *)theTableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath

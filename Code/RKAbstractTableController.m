@@ -29,6 +29,7 @@
 #import "RKTableSection.h"
 #import "RKObjectRequestOperation.h"
 #import "RKObjectMappingOperationDataSource.h"
+#import "RKManagedObjectRequestOperation.h"
 
 // Define logging component
 #undef RKLogComponent
@@ -203,7 +204,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
         _autoResizesForKeyboard = autoResizesForKeyboard;
         if (_autoResizesForKeyboard) {
             self.keyboardScroller = [[RKKeyboardScroller alloc] initWithViewController:self.viewController scrollView:self.tableView];
-            self.keyboardScroller;
         } else {
             self.keyboardScroller = nil;
         }
@@ -511,13 +511,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
         [self.delegate tableController:self willDisplayCell:cell forObject:mappableObject atIndexPath:indexPath];
     }
 
-    // Informal protocol
-    // TODO: Needs documentation!!!
-    SEL willDisplaySelector = @selector(willDisplayInTableViewCell:);
-    if ([mappableObject respondsToSelector:willDisplaySelector]) {
-        [mappableObject performSelector:willDisplaySelector withObject:cell];
-    }
-
     // Handle hiding header/footer rows when empty
     if ([self isEmpty]) {
         if (! self.showsHeaderRowsWhenEmpty && [_headerItems containsObject:mappableObject]) {
@@ -632,6 +625,74 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 
 #pragma mark - Network Table Loading
 
+- (id)objectRequestOperationWithRequest:(NSURLRequest *)request
+{
+    RKHTTPRequestOperation *requestOperation = [[RKHTTPRequestOperation alloc] initWithRequest:request];
+    return [[RKObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
+}
+
+- (void)loadTableWithRequest:(NSURLRequest *)request
+{
+    // Cancel any existing load
+    if (self.objectRequestOperation) {
+        [self.objectRequestOperation cancel];
+        [self.objectRequestOperation removeObserver:self forKeyPath:@"isExecuting"];
+        [self.objectRequestOperation removeObserver:self forKeyPath:@"isCancelled"];
+        [self.objectRequestOperation removeObserver:self forKeyPath:@"isFinished"];
+    }
+    
+    RKObjectRequestOperation *objectRequestOperation = [self objectRequestOperationWithRequest:request];
+    [objectRequestOperation addObserver:self forKeyPath:@"isExecuting" options:0 context:0];
+    [objectRequestOperation addObserver:self forKeyPath:@"isCancelled" options:0 context:0];
+    [objectRequestOperation addObserver:self forKeyPath:@"isFinished" options:0 context:0];
+    
+    if (self.operationQueue) {
+        [self.operationQueue addOperation:objectRequestOperation];
+    } else {
+        RKLogWarning(@"No operation queue configured: starting operation unqueued");
+        [objectRequestOperation start];
+    }
+    
+    self.request = request;
+    self.objectRequestOperation = objectRequestOperation;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:@"state"]) {
+        [self updateTableViewForStateChange:change];
+    } else if ([keyPath isEqualToString:@"error"]) {
+        [self setErrorState:(self.error != nil)];
+    }
+    
+    // KVO on the request operation
+    if (object == self.objectRequestOperation) {
+        if ([keyPath isEqualToString:@"isExecuting"]) {
+            if ([self.objectRequestOperation isExecuting]) {
+                RKLogTrace(@"tableController %@ started loading.", self);
+                [self didStartLoad];
+            }
+        } else if ([keyPath isEqualToString:@"isFinished"]) {
+            if ([self.objectRequestOperation isFinished]) {
+                if (self.objectRequestOperation.error) {
+                    RKLogError(@"tableController %@ failed network load with error: %@", self, self.objectRequestOperation.error);
+                    [self didFailLoadWithError:self.objectRequestOperation.error];
+                } else {
+                    [self didFinishLoad];
+                }
+            }
+            
+        } else if ([keyPath isEqualToString:@"isCancelled"]) {
+            RKLogTrace(@"tableController %@ cancelled loading.", self);
+            self.loading = NO;
+            
+            if ([self.delegate respondsToSelector:@selector(tableControllerDidCancelLoad:)]) {
+                [self.delegate tableControllerDidCancelLoad:self];
+            }
+        }
+    }
+}
+
 - (void)cancelLoad
 {
     [self.objectRequestOperation cancel];
@@ -644,6 +705,8 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
     }
 
     if (_autoRefreshFromNetwork) {
+        // TODO: Update to use system cache!
+        
 //        NSAssert(_cache, @"Found a nil cache when trying to read our last loaded time");
 //        NSDictionary *lastUpdatedDates = [_cache dictionaryForCacheKey:lastUpdatedDateDictionaryKey];
 //        RKLogTrace(@"Last updated dates dictionary retrieved from tableController cache: %@", lastUpdatedDates);
@@ -660,8 +723,11 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 
 - (BOOL)isAutoRefreshNeeded
 {
+    return YES;
+    
+    // TODO: Re-enable
     BOOL isAutoRefreshNeeded = NO;
-    if (_autoRefreshFromNetwork) {
+    if (self.autoRefreshFromNetwork) {
         isAutoRefreshNeeded = YES;
         NSDate *lastUpdatedDate = [self lastUpdatedDate];
         RKLogTrace(@"Last updated: %@", lastUpdatedDate);
@@ -676,21 +742,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 
 #pragma mark - RKRequestDelegate & RKObjectLoaderDelegate methods
 
-//- (void)requestDidStartLoad:(RKRequest *)request
-//{
-//    RKLogTrace(@"tableController %@ started loading.", self);
-//    [self didStartLoad];
-//}
-//
-//- (void)requestDidCancelLoad:(RKRequest *)request
-//{
-//    RKLogTrace(@"tableController %@ cancelled loading.", self);
-//    self.loading = NO;
-//
-//    if ([self.delegate respondsToSelector:@selector(tableControllerDidCancelLoad:)]) {
-//        [self.delegate tableControllerDidCancelLoad:self];
-//    }
-//}
 //
 //- (void)requestDidTimeout:(RKRequest *)request
 //{
@@ -722,18 +773,7 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 //
 //- (void)objectLoader:(RKObjectLoader *)objectLoader didFailWithError:(NSError *)error
 //{
-//    RKLogError(@"tableController %@ failed network load with error: %@", self, error);
-//    [self didFailLoadWithError:error];
-//}
-//
-//- (void)objectLoaderDidFinishLoading:(RKObjectLoader *)objectLoader
-//{
-//    if ([self.delegate respondsToSelector:@selector(tableController:didLoadTableWithObjectLoader:)]) {
-//        [self.delegate tableController:self didLoadTableWithObjectLoader:objectLoader];
-//    }
-//
-//    [objectLoader reset];
-//    [self didFinishLoad];
+
 //}
 
 - (void)didStartLoad
@@ -1059,15 +1099,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 
     // Remove the overlay if no longer in use
     [self resetOverlayView];
-}
-
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
-{
-    if ([keyPath isEqualToString:@"state"]) {
-        [self updateTableViewForStateChange:change];
-    } else if ([keyPath isEqualToString:@"error"]) {
-        [self setErrorState:(self.error != nil)];
-    }
 }
 
 #pragma mark - Pull to Refresh

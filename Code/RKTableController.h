@@ -87,7 +87,6 @@
 ///-----------------------------------------------------------------------------
 
 //- (void)loadTableFromResourcePath:(NSString *)resourcePath;
-- (void)loadTableWithRequest:(NSURLRequest *)request;
 
 ///-----------------------------------------------------------------------------
 /// @name Managing Sections
