@@ -73,9 +73,9 @@
     return cellMapping;
 }
 
-- (id)init
+- (id)initWithClass:(Class)objectClass
 {
-    self = [super init];
+    self = [super initWithClass:objectClass];
     if (self) {
         self.style = UITableViewCellStyleDefault;
         self.managesCellAttributes = NO;
