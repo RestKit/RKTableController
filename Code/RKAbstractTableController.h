@@ -256,10 +256,12 @@ typedef NSUInteger RKTableControllerState;
 // TODO: Audit and expand the library of callbacks...
 // TODO: Docs AND tests...
 @property (nonatomic, copy) RKTableCellForObjectAtIndexPathBlock onSelectCellForObjectAtIndexPath;
+@property (nonatomic, copy) RKTableCellForObjectAtIndexPathBlock onDeselectCellForObjectAtIndexPath;
 @property (nonatomic, copy) RKTableCellForObjectAtIndexPathBlock onPrepareCellForObjectAtIndexPath; // TODO: May want to eliminate...
 @property (nonatomic, copy) RKTableCellForObjectAtIndexPathBlock onWillDisplayCellForObjectAtIndexPath;
 
 - (void)setOnSelectCellForObjectAtIndexPath:(RKTableCellForObjectAtIndexPathBlock)onSelectCellForObjectAtIndexPath;
+- (void)setOnDeselectCellForObjectAtIndexPath:(RKTableCellForObjectAtIndexPathBlock)onDeselectCellForObjectAtIndexPath;
 - (void)setOnPrepareCellForObjectAtIndexPath:(RKTableCellForObjectAtIndexPathBlock)onPrepareCellForObjectAtIndexPath;
 - (void)setOnWillDisplayCellForObjectAtIndexPath:(RKTableCellForObjectAtIndexPathBlock)onWillDisplayCellForObjectAtIndexPath;
 
@@ -435,6 +437,7 @@ typedef NSUInteger RKTableControllerState;
 // Cells
 - (void)tableController:(RKAbstractTableController *)tableController willDisplayCell:(UITableViewCell *)cell forObject:(id)object atIndexPath:(NSIndexPath *)indexPath;
 - (void)tableController:(RKAbstractTableController *)tableController didSelectCell:(UITableViewCell *)cell forObject:(id)object atIndexPath:(NSIndexPath *)indexPath;
+- (void)tableController:(RKAbstractTableController *)tableController didDeselectCell:(UITableViewCell *)cell forObject:(id)object atIndexPath:(NSIndexPath *)indexPath;
 
 // Sections
 - (CGFloat)tableController:(RKAbstractTableController *)tableController heightForHeaderInSection:(NSInteger)sectionIndex;

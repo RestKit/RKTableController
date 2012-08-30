@@ -493,6 +493,32 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
     }
 }
 
+- (void)tableView:(UITableView *)theTableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSAssert(theTableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
+    RKLogTrace(@"%@: Row at indexPath %@ deselected for tableView %@", self, indexPath, theTableView);
+
+    id object = [self objectForRowAtIndexPath:indexPath];
+    
+    UITableViewCell *cell = [theTableView cellForRowAtIndexPath:indexPath];
+    RKTableViewCellMapping *cellMapping = [_cellMappings cellMappingForObject:object];
+    
+    if (cellMapping.onDeselectCellForObjectAtIndexPath) {
+        RKLogTrace(@"%@: Invoking onDeselectCellForObjectAtIndexPath block with cellMapping %@ for object %@ at indexPath = %@", self, cell, object, indexPath);
+        cellMapping.onDeselectCellForObjectAtIndexPath(cell, object, indexPath);
+    }
+    
+    // Table level selection callbacks
+    if (self.onDeselectCellForObjectAtIndexPath) {
+        self.onDeselectCellForObjectAtIndexPath(cell, object, indexPath);
+    }
+    
+    if ([self.delegate respondsToSelector:@selector(tableController:didDeselectCell:forObject:atIndexPath:)]) {
+        [self.delegate tableController:self didDeselectCell:cell forObject:object atIndexPath:indexPath];
+    }
+
+}
+
 - (void)tableView:(UITableView *)theTableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSAssert(theTableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);

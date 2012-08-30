@@ -111,6 +111,13 @@
 @property (nonatomic, copy) RKTableCellForObjectAtIndexPathBlock onSelectCellForObjectAtIndexPath;
 
 /**
+ Invoked when the user has touched a selected cell corresponding to an object. The block
+ is invoked with a reference to both the UITableViewCell that was touched and the
+ object the cell is representing.
+ */
+@property (nonatomic, copy) RKTableCellForObjectAtIndexPathBlock onDeselectCellForObjectAtIndexPath;
+
+/**
  Invoked when the user has touched a cell configured with this mapping. The block is invoked
  without any arguments. This is useful for one-off touch events where you do not care about
  the content in which the selection took place.

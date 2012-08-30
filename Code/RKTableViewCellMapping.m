@@ -36,6 +36,7 @@
 @synthesize accessoryType = _accessoryType;
 @synthesize selectionStyle = _selectionStyle;
 @synthesize onSelectCellForObjectAtIndexPath = _onSelectCellForObjectAtIndexPath;
+@synthesize onDeselectCellForObjectAtIndexPath = _onDeselectCellForObjectAtIndexPath;
 @synthesize onSelectCell = _onSelectCell;
 @synthesize onCellWillAppearForObjectAtIndexPath = _onCellWillAppearForObjectAtIndexPath;
 @synthesize heightOfCellForObjectAtIndexPath = _heightOfCellForObjectAtIndexPath;
@@ -107,6 +108,7 @@
     copy.accessoryType = self.accessoryType;
     copy.selectionStyle = self.selectionStyle;
     copy.onSelectCellForObjectAtIndexPath = self.onSelectCellForObjectAtIndexPath;
+    copy.onDeselectCellForObjectAtIndexPath = self.onDeselectCellForObjectAtIndexPath;
     copy.onSelectCell = self.onSelectCell;
     copy.onCellWillAppearForObjectAtIndexPath = self.onCellWillAppearForObjectAtIndexPath;
     copy.heightOfCellForObjectAtIndexPath = self.heightOfCellForObjectAtIndexPath;
