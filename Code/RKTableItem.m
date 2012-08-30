@@ -118,7 +118,7 @@
     self = [super init];
     if (self) {
         _userData = [RKMutableBlockDictionary new];
-        _cellMapping = [RKTableViewCellMapping new];
+        _cellMapping = [RKTableViewCellMapping cellMapping];
     }
 
     return self;

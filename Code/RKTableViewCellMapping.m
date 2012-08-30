@@ -74,6 +74,14 @@
     return cellMapping;
 }
 
+- (id)init
+{
+    @throw [NSException exceptionWithName:NSInternalInconsistencyException
+                                   reason:[NSString stringWithFormat:@"%@ Failed to call designated initializer. Invoke initWithClass: instead.",
+                                           NSStringFromClass([self class])]
+                                 userInfo:nil];
+}
+
 - (id)initWithClass:(Class)objectClass
 {
     self = [super initWithClass:objectClass];
