@@ -503,6 +503,38 @@
     return nil;
 }
 
+#pragma mark - UIScrollViewDelegate methods
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if (self.onScrollViewDidScroll) self.onScrollViewDidScroll(scrollView);
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    if (self.onScrollViewWillBeginDragging) self.onScrollViewWillBeginDragging(scrollView);
+}
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView
+{
+    if (self.onScrollViewShouldScrollToTop) self.onScrollViewShouldScrollToTop(scrollView);
+}
+
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
+{
+    if (self.onScrollViewDidScrollToTop) self.onScrollViewDidScrollToTop(scrollView);
+}
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
+{
+    if (self.onScrollViewWillBeginDecelerating) self.onScrollViewWillBeginDecelerating(scrollView);
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if (self.onScrollViewDidEndDecelerating) self.onScrollViewDidEndDecelerating(scrollView);
+}
+
 #pragma mark - Cell Mappings
 
 - (id)objectForRowAtIndexPath:(NSIndexPath *)indexPath

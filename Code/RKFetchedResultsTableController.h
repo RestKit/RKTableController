@@ -23,6 +23,7 @@
 #import "RKManagedObjectCaching.h"
 
 typedef UIView *(^RKFetchedResultsTableViewViewForHeaderInSectionBlock)(NSUInteger sectionIndex, NSString *sectionTitle);
+typedef void (^RKFetchedResultsTableViewScrollViewBlock)(UIScrollView *scrollView);
 
 @class RKFetchedResultsTableController;
 @protocol RKFetchedResultsTableControllerDelegate <RKAbstractTableControllerDelegate>
@@ -63,6 +64,14 @@ typedef UIView *(^RKFetchedResultsTableViewViewForHeaderInSectionBlock)(NSUInteg
 // Sorting
 @property (nonatomic, assign) SEL sortSelector;
 @property (nonatomic, copy) NSComparator sortComparator;
+
+// UIScrollViewDelegate blocks
+@property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewDidScroll;
+@property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewWillBeginDragging;
+@property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewShouldScrollToTop;
+@property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewDidScrollToTop;
+@property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewWillBeginDecelerating;
+@property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewDidEndDecelerating;
 
 //- (void)setObjectMappingForClass:(Class)objectClass; // TODO: Kill this API... mapping descriptors will cover use case.
 - (void)loadTable;
