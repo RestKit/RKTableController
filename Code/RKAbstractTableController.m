@@ -23,7 +23,6 @@
 #import "RKMappingOperation.h"
 #import "RKLog.h"
 #import "RKErrors.h"
-#import "RKReachabilityObserver.h"
 #import "UIView+FindFirstResponder.h"
 #import "RKRefreshGestureRecognizer.h"
 #import "RKTableSection.h"
