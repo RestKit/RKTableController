@@ -395,6 +395,99 @@
     return [section objectAtIndex:indexPath.row];
 }
 
+
+#pragma mark = UIScrollViewDelegate pass through methods
+
+- (BOOL)respondsToSelector:(SEL)aSelector
+{
+    if (sel_isEqual(aSelector, @selector(scrollViewDidScroll:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewWillBeginDragging:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewWillBeginDragging:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewWillBeginDragging:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewDidEndDragging:willDecelerate:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewShouldScrollToTop:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewShouldScrollToTop:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewDidScrollToTop:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewDidScrollToTop:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewWillBeginDecelerating:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewWillBeginDecelerating:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewDidEndDecelerating:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewDidEndDecelerating:)];
+    } else if (sel_isEqual(aSelector, @selector(scrollViewDidEndScrollingAnimation:))) {
+        return [self.viewController respondsToSelector:@selector(scrollViewDidEndScrollingAnimation:)];
+    } else {
+        return [super respondsToSelector:aSelector];
+    }
+}
+
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewDidScroll:)]) {
+        [((id)self.viewController) scrollViewDidScroll:scrollView];
+    }
+}
+
+- (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewWillBeginDragging:)]) {
+        [((id)self.viewController) scrollViewWillBeginDragging:scrollView];
+    }
+}
+
+- (void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewWillEndDragging:withVelocity:targetContentOffset:)]) {
+        [((id)self.viewController) scrollViewWillEndDragging:scrollView withVelocity:velocity targetContentOffset:targetContentOffset];
+    }
+}
+
+- (void)scrollViewDidEndDragging:(UIScrollView *)scrollView willDecelerate:(BOOL)decelerate
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewDidEndDragging:willDecelerate:)]) {
+        [((id)self.viewController) scrollViewDidEndDragging:scrollView willDecelerate:decelerate];
+    }
+}
+
+- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewShouldScrollToTop:)]) {
+        [((id)self.viewController) scrollViewShouldScrollToTop:scrollView];
+    }
+}
+
+- (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewDidScrollToTop:)]) {
+        [((id)self.viewController) scrollViewDidScrollToTop:scrollView];
+    }
+}
+
+- (void)scrollViewWillBeginDecelerating:(UIScrollView *)scrollView
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewWillBeginDecelerating:)]) {
+        [((id)self.viewController) scrollViewWillBeginDecelerating:scrollView];
+    }
+}
+
+- (void)scrollViewDidEndDecelerating:(UIScrollView *)scrollView
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewDidEndDecelerating:)]) {
+        [((id)self.viewController) scrollViewDidEndDecelerating:scrollView];
+    }
+}
+
+- (void)scrollViewDidEndScrollingAnimation:(UIScrollView *)scrollView
+{
+    if ([self.viewController respondsToSelector:@selector(scrollViewDidEndScrollingAnimation:)]) {
+        [((id)self.viewController) scrollViewDidEndScrollingAnimation:scrollView];
+    }
+}
+
+
 #pragma mark - UITableViewDataSource methods
 
 - (NSString *)tableView:(UITableView *)theTableView titleForHeaderInSection:(NSInteger)section
