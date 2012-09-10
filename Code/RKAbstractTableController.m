@@ -109,14 +109,14 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
                            forViewController:tableViewController];
 }
 
-- (id)initWithTableView:(UITableView *)tableView viewController:(UIViewController *)theViewController
+- (id)initWithTableView:(UITableView *)tableView viewController:(UIViewController *)viewController
 {
     NSAssert(tableView, @"Cannot initialize a table view model with a nil tableView");
-    NSAssert(theViewController, @"Cannot initialize a table view model with a nil viewController");
+    NSAssert(viewController, @"Cannot initialize a table view model with a nil viewController");
     self = [self init];
     if (self) {
         self.tableView = tableView;
-        _viewController = theViewController; // Assign directly to avoid side-effect of overloaded accessor method
+        _viewController = viewController; // Assign directly to avoid side-effect of overloaded accessor method
         self.variableHeightRows = NO;
         self.defaultRowAnimation = UITableViewRowAnimationFade;
         self.overlayFrame = CGRectZero;
