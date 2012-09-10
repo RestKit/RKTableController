@@ -23,13 +23,6 @@
 
 @implementation RKTableItem
 
-@synthesize text = _text;
-@synthesize detailText = _detailText;
-@synthesize image = _image;
-@synthesize cellMapping = _cellMapping;
-@synthesize URL = _URL;
-@synthesize userData = _userData;
-
 + (NSArray *)tableItemsFromStrings:(NSString *)firstString, ...
 {
     va_list args;

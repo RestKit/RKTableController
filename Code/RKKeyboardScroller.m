@@ -34,9 +34,6 @@
 
 @implementation RKKeyboardScroller
 
-@synthesize viewController = _viewController;
-@synthesize scrollView = _scrollView;
-
 - (id)init
 {
     RKLogError(@"Failed to call designated initialized initWithViewController:");

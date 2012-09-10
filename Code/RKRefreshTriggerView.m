@@ -33,10 +33,6 @@
 @end
 
 @implementation RKRefreshTriggerView
-@synthesize titleLabel      = _titleLabel;
-@synthesize activityView    = _activityView;
-@synthesize arrowView       = _arrowView;
-@synthesize lastUpdatedLabel = _lastUpdatedLabel;
 
 - (id)initWithFrame:(CGRect)frame
 {

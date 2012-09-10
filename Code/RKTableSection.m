@@ -29,15 +29,6 @@
 
 @implementation RKTableSection
 
-@synthesize objects = _objects;
-@synthesize cellMappings = _cellMappings;
-@synthesize tableController = _tableController;
-@synthesize headerTitle = _headerTitle;
-@synthesize footerTitle = _footerTitle;
-@synthesize headerHeight = _headerHeight;
-@synthesize footerHeight = _footerHeight;
-@synthesize headerView = _headerView;
-@synthesize footerView = _footerView;
 
 + (id)section
 {

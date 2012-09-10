@@ -31,24 +31,6 @@
 
 @implementation RKTableViewCellMapping
 
-@synthesize reuseIdentifier = _reuseIdentifier;
-@synthesize style = _style;
-@synthesize accessoryType = _accessoryType;
-@synthesize selectionStyle = _selectionStyle;
-@synthesize onSelectCellForObjectAtIndexPath = _onSelectCellForObjectAtIndexPath;
-@synthesize onDeselectCellForObjectAtIndexPath = _onDeselectCellForObjectAtIndexPath;
-@synthesize onSelectCell = _onSelectCell;
-@synthesize onCellWillAppearForObjectAtIndexPath = _onCellWillAppearForObjectAtIndexPath;
-@synthesize heightOfCellForObjectAtIndexPath = _heightOfCellForObjectAtIndexPath;
-@synthesize onTapAccessoryButtonForObjectAtIndexPath = _onTapAccessoryButtonForObjectAtIndexPath;
-@synthesize titleForDeleteButtonForObjectAtIndexPath = _titleForDeleteButtonForObjectAtIndexPath;
-@synthesize editingStyleForObjectAtIndexPath = _editingStyleForObjectAtIndexPath;
-@synthesize targetIndexPathForMove = _targetIndexPathForMove;
-@synthesize rowHeight = _rowHeight;
-@synthesize deselectsRowOnSelection = _deselectsRowOnSelection;
-@synthesize managesCellAttributes = _managesCellAttributes;
-@synthesize mutablePrepareCellBlocks = _mutablePrepareCellBlocks;
-
 + (id)mappingForClass:(Class)objectClass
 {
     NSAssert([objectClass isSubclassOfClass:[UITableViewCell class]], @"Cell mappings can only target classes that inherit from UITableViewCell");

@@ -32,8 +32,6 @@ typedef id (^RKMutableBlockDictionaryValueBlock)();
 
 @implementation RKMutableBlockDictionaryBlockValue
 
-@synthesize executionBlock = _executionBlock;
-
 + (id)valueWithBlock:(RKMutableBlockDictionaryValueBlock)executionBlock
 {
     RKMutableBlockDictionaryBlockValue *value = [self new];

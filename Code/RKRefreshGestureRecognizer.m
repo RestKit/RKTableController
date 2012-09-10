@@ -40,11 +40,6 @@ static CGFloat const kDefaultTriggerViewHeight = 64.f;
 @end
 
 @implementation RKRefreshGestureRecognizer
-#pragma mark - Synthesizers
-@synthesize triggerView = _triggerView;
-@synthesize refreshState = _refreshState;
-@synthesize isBoundToScrollView = _isBoundToScrollView;
-@synthesize dateFormatter = _dateFormatter;
 
 #pragma mark - Life Cycle
 - (id)initWithTarget:(id)target action:(SEL)action
