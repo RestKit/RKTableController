@@ -437,7 +437,7 @@
         return [self.delegate tableController:self heightForHeaderInSection:sectionIndex];
     } else {
         RKTableSection *section = [self sectionAtIndex:sectionIndex];
-        return section.headerHeight;
+        return section.headerHeight ?: self.tableView.sectionHeaderHeight;
     }
 }
 
