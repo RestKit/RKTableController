@@ -432,12 +432,26 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)sectionIndex
 {
+    CGFloat tableViewSectionHeaderDefaultHeight = 22.0f;
     NSAssert(tableView == self.tableView, @"heightForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
     if ([self.delegate respondsToSelector:@selector(tableController:heightForHeaderInSection:)]) {
         return [self.delegate tableController:self heightForHeaderInSection:sectionIndex];
     } else {
         RKTableSection *section = [self sectionAtIndex:sectionIndex];
-        return section.headerHeight ?: self.tableView.sectionHeaderHeight;
+        
+        if (section.headerHeight) {
+            return section.headerHeight;
+        } else if (section.headerTitle) {
+            return self.tableView.sectionHeaderHeight;
+        } else if (section.headerView) {
+            if (self.tableView.sectionHeaderHeight != tableViewSectionHeaderDefaultHeight) {
+                return self.tableView.sectionHeaderHeight;
+            } else {
+                return section.headerView.frame.size.height;
+            }
+        } else {
+            return 0;
+        }
     }
 }
 
