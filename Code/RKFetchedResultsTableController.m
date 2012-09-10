@@ -35,6 +35,7 @@
 @property (nonatomic, assign) BOOL isEmptyBeforeAnimation;
 @property (nonatomic, strong, readwrite) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) NSArray *arraySortedFetchedObjects;
+@property (nonatomic, assign, getter = hasRequestChanged) BOOL requestChanged;
 
 - (BOOL)performFetch:(NSError **)error;
 - (void)updateSortedArray;
@@ -46,8 +47,13 @@
 
 - (void)dealloc
 {
-    _fetchedResultsController.delegate = nil;
-    _sectionNameKeyPath = nil;
+    self.fetchedResultsController.delegate = nil;
+}
+
+- (void)setRequest:(NSURLRequest *)request
+{
+    if (request != self.request) self.requestChanged = YES;
+    [super setRequest:request];
 }
 
 #pragma mark - Helpers
@@ -279,7 +285,8 @@
     // is accurate when computing the table view data source responses
     [self.tableView reloadData];
 
-    if (!self.objectRequestOperation && self.request) {
+    if (!self.objectRequestOperation && self.request && self.hasRequestChanged) {
+        self.requestChanged = NO;
         [self loadTableWithRequest:self.request];
     }
 }
