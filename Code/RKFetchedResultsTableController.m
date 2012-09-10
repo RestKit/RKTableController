@@ -376,16 +376,16 @@
 
 #pragma mark - UITableViewDataSource methods
 
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)theTableView
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    NSAssert(theTableView == self.tableView, @"numberOfSectionsInTableView: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"numberOfSectionsInTableView: invoked with inappropriate tableView: %@", tableView);
     RKLogTrace(@"numberOfSectionsInTableView: %d (%@)", [[self.fetchedResultsController sections] count], [[self.fetchedResultsController sections] valueForKey:@"name"]);
     return [[self.fetchedResultsController sections] count];
 }
 
-- (NSInteger)tableView:(UITableView *)theTableView numberOfRowsInSection:(NSInteger)section
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    NSAssert(theTableView == self.tableView, @"tableView:numberOfRowsInSection: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:numberOfRowsInSection: invoked with inappropriate tableView: %@", tableView);
     RKLogTrace(@"%@ numberOfRowsInSection:%d = %d", self, section, self.sectionCount);
     id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:section];
     NSUInteger numberOfRows = [sectionInfo numberOfObjects];
@@ -401,37 +401,37 @@
     return numberOfRows;
 }
 
-- (NSString *)tableView:(UITableView *)theTableView titleForHeaderInSection:(NSInteger)section
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     id <NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
     return [sectionInfo name];
 }
 
-- (NSString *)tableView:(UITableView *)theTableView titleForFooterInSection:(NSInteger)section
+- (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
-    NSAssert(theTableView == self.tableView, @"tableView:titleForFooterInSection: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:titleForFooterInSection: invoked with inappropriate tableView: %@", tableView);
     return nil;
 }
 
-- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)theTableView
+- (NSArray *)sectionIndexTitlesForTableView:(UITableView *)tableView
 {
-    if (theTableView.style == UITableViewStylePlain && self.showsSectionIndexTitles) {
+    if (tableView.style == UITableViewStylePlain && self.showsSectionIndexTitles) {
         return [_fetchedResultsController sectionIndexTitles];
     }
     return nil;
 }
 
-- (NSInteger)tableView:(UITableView *)theTableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
+- (NSInteger)tableView:(UITableView *)tableView sectionForSectionIndexTitle:(NSString *)title atIndex:(NSInteger)index
 {
-    if (theTableView.style == UITableViewStylePlain && self.showsSectionIndexTitles) {
+    if (tableView.style == UITableViewStylePlain && self.showsSectionIndexTitles) {
         return [self.fetchedResultsController sectionForSectionIndexTitle:title atIndex:index];
     }
     return 0;
 }
 
-- (void)tableView:(UITableView *)theTableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:commitEditingStyle:forRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:commitEditingStyle:forRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
     if (self.canEditRows && editingStyle == UITableViewCellEditingStyleDelete) {
         NSManagedObject *managedObject = [self objectForRowAtIndexPath:indexPath];
 
@@ -458,40 +458,40 @@
     }
 }
 
-- (void)tableView:(UITableView *)theTableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destIndexPath
+- (void)tableView:(UITableView *)tableView moveRowAtIndexPath:(NSIndexPath *)sourceIndexPath toIndexPath:(NSIndexPath *)destIndexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:moveRowAtIndexPath:toIndexPath: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:moveRowAtIndexPath:toIndexPath: invoked with inappropriate tableView: %@", tableView);
 }
 
-- (BOOL)tableView:(UITableView *)theTableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:canEditRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:canEditRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
     return self.canEditRows && [self isOnline] && !([self isHeaderIndexPath:indexPath] || [self isFooterIndexPath:indexPath] || [self isEmptyItemIndexPath:indexPath]);
 }
 
-- (BOOL)tableView:(UITableView *)theTableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
+- (BOOL)tableView:(UITableView *)tableView canMoveRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:canMoveRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:canMoveRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
     return self.canMoveRows && !([self isHeaderIndexPath:indexPath] || [self isFooterIndexPath:indexPath] || [self isEmptyItemIndexPath:indexPath]);
 }
 
 #pragma mark - UITableViewDelegate methods
 
-- (CGFloat)tableView:(UITableView *)theTableView heightForHeaderInSection:(NSInteger)section
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    NSAssert(theTableView == self.tableView, @"heightForHeaderInSection: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"heightForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
     return self.heightForHeaderInSection;
 }
 
-- (CGFloat)tableView:(UITableView *)theTableView heightForFooterInSection:(NSInteger)sectionIndex
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)sectionIndex
 {
-    NSAssert(theTableView == self.tableView, @"heightForFooterInSection: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"heightForFooterInSection: invoked with inappropriate tableView: %@", tableView);
     return 0;
 }
 
-- (UIView *)tableView:(UITableView *)theTableView viewForHeaderInSection:(NSInteger)section
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
-    NSAssert(theTableView == self.tableView, @"viewForHeaderInSection: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"viewForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
     if (self.onViewForHeaderInSection) {
         NSString *sectionTitle = [self tableView:self.tableView titleForHeaderInSection:section];
         if (sectionTitle) {
@@ -501,9 +501,9 @@
     return nil;
 }
 
-- (UIView *)tableView:(UITableView *)theTableView viewForFooterInSection:(NSInteger)sectionIndex
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)sectionIndex
 {
-    NSAssert(theTableView == self.tableView, @"viewForFooterInSection: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"viewForFooterInSection: invoked with inappropriate tableView: %@", tableView);
     return nil;
 }
 

@@ -109,13 +109,13 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
                            forViewController:tableViewController];
 }
 
-- (id)initWithTableView:(UITableView *)theTableView viewController:(UIViewController *)theViewController
+- (id)initWithTableView:(UITableView *)tableView viewController:(UIViewController *)theViewController
 {
-    NSAssert(theTableView, @"Cannot initialize a table view model with a nil tableView");
+    NSAssert(tableView, @"Cannot initialize a table view model with a nil tableView");
     NSAssert(theViewController, @"Cannot initialize a table view model with a nil viewController");
     self = [self init];
     if (self) {
-        self.tableView = theTableView;
+        self.tableView = tableView;
         _viewController = theViewController; // Assign directly to avoid side-effect of overloaded accessor method
         self.variableHeightRows = NO;
         self.defaultRowAnimation = UITableViewRowAnimationFade;
@@ -384,9 +384,9 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     return cell;
 }
 
-- (UITableViewCell *)tableView:(UITableView *)theTableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:cellForRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:cellForRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
     NSAssert(indexPath, @"Cannot retrieve cell for nil indexPath");
     id mappableObject = [self objectForRowAtIndexPath:indexPath];
     NSAssert(mappableObject, @"Cannot build a tableView cell without an object");
@@ -427,14 +427,14 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 #pragma mark - UITableViewDelegate methods
 
-- (void)tableView:(UITableView *)theTableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
-    RKLogTrace(@"%@: Row at indexPath %@ selected for tableView %@", self, indexPath, theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
+    RKLogTrace(@"%@: Row at indexPath %@ selected for tableView %@", self, indexPath, tableView);
 
     id object = [self objectForRowAtIndexPath:indexPath];
 
-    UITableViewCell *cell = [theTableView cellForRowAtIndexPath:indexPath];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     RKTableViewCellMapping *cellMapping = [_cellMappings cellMappingForObject:object];
 
     // NOTE: Handle deselection first as the onSelectCell processing may result in the tableView
@@ -462,14 +462,14 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     }
 }
 
-- (void)tableView:(UITableView *)theTableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
-    RKLogTrace(@"%@: Row at indexPath %@ deselected for tableView %@", self, indexPath, theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
+    RKLogTrace(@"%@: Row at indexPath %@ deselected for tableView %@", self, indexPath, tableView);
 
     id object = [self objectForRowAtIndexPath:indexPath];
     
-    UITableViewCell *cell = [theTableView cellForRowAtIndexPath:indexPath];
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     RKTableViewCellMapping *cellMapping = [_cellMappings cellMappingForObject:object];
     
     if (cellMapping.onDeselectCellForObjectAtIndexPath) {
@@ -488,9 +488,9 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 }
 
-- (void)tableView:(UITableView *)theTableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(theTableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", theTableView);
+    NSAssert(tableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
     cell.hidden = NO;
     id mappableObject = [self objectForRowAtIndexPath:indexPath];
     RKTableViewCellMapping *cellMapping = [self.cellMappings cellMappingForObject:mappableObject];
@@ -524,7 +524,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 // Variable height support
 
-- (CGFloat)tableView:(UITableView *)theTableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (self.variableHeightRows) {
         RKTableViewCellMapping *cellMapping = [self cellMappingForObjectAtIndexPath:indexPath];
@@ -544,7 +544,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     return self.tableView.rowHeight;
 }
 
-- (void)tableView:(UITableView *)theTableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView accessoryButtonTappedForRowWithIndexPath:(NSIndexPath *)indexPath
 {
     RKTableViewCellMapping *cellMapping = [self cellMappingForObjectAtIndexPath:indexPath];
     if (cellMapping.onTapAccessoryButtonForObjectAtIndexPath) {
@@ -555,7 +555,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     }
 }
 
-- (NSString *)tableView:(UITableView *)theTableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSString *)tableView:(UITableView *)tableView titleForDeleteConfirmationButtonForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     RKTableViewCellMapping *cellMapping = [self cellMappingForObjectAtIndexPath:indexPath];
     if (cellMapping.titleForDeleteButtonForObjectAtIndexPath) {
@@ -567,7 +567,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     return NSLocalizedString(@"Delete", nil);
 }
 
-- (UITableViewCellEditingStyle)tableView:(UITableView *)theTableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
+- (UITableViewCellEditingStyle)tableView:(UITableView *)tableView editingStyleForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (_canEditRows) {
         RKTableViewCellMapping *cellMapping = [self cellMappingForObjectAtIndexPath:indexPath];
@@ -582,7 +582,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     return UITableViewCellEditingStyleNone;
 }
 
-- (void)tableView:(UITableView *)theTableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView didEndEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self.delegate respondsToSelector:@selector(tableController:didEndEditing:atIndexPath:)]) {
         id object = [self objectForRowAtIndexPath:indexPath];
@@ -590,7 +590,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     }
 }
 
-- (void)tableView:(UITableView *)theTableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)tableView:(UITableView *)tableView willBeginEditingRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if ([self.delegate respondsToSelector:@selector(tableController:willBeginEditing:atIndexPath:)]) {
         id object = [self objectForRowAtIndexPath:indexPath];
@@ -598,7 +598,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     }
 }
 
-- (NSIndexPath *)tableView:(UITableView *)theTableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath
+- (NSIndexPath *)tableView:(UITableView *)tableView targetIndexPathForMoveFromRowAtIndexPath:(NSIndexPath *)sourceIndexPath toProposedIndexPath:(NSIndexPath *)proposedDestinationIndexPath
 {
     if (_canMoveRows) {
         RKTableViewCellMapping *cellMapping = [self cellMappingForObjectAtIndexPath:sourceIndexPath];
@@ -612,7 +612,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     return proposedDestinationIndexPath;
 }
 
-- (NSIndexPath *)tableView:(UITableView *)theTableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     [self removeSwipeView:YES];
     return indexPath;
