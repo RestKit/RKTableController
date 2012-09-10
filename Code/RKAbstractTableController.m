@@ -730,6 +730,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
         case RKTableControllerStateNormal:
         case RKTableControllerStateLoading:
         case RKTableControllerStateNotYetLoaded:
+            return nil;
             break;
 
         case RKTableControllerStateEmpty:
@@ -904,6 +905,9 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
         [[NSNotificationCenter defaultCenter] postNotificationName:RKTableControllerDidStartLoadNotification object:self];
 
+        // Remove the image overlay while we are loading
+        [self removeImageOverlay];
+        
         if (self.loadingView) {
             [self addToOverlayView:self.loadingView modally:NO];
         }
@@ -990,7 +994,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     if (oldState == newState) {
         return;
     }
-    NSLog(@"State Change for <%@: %p>: %@", self.class, self, RKStringDescribingTransitionFromTableControllerStateToState(oldState, newState));
+    RKLogTrace(@"State Change for <%@: %p>: %@", self.class, self, RKStringDescribingTransitionFromTableControllerStateToState(oldState, newState));
 
     // Determine state transitions
     BOOL loadedChanged = ((oldState ^ newState) & RKTableControllerStateNotYetLoaded);
@@ -1013,7 +1017,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
         [self removeImageOverlay];
     } else {
         if ([self isLoading]) {
-            // During a load we don't adjust the overlay
+            // Don't adjust the overlay until the load has completed
             return;
         }
 
