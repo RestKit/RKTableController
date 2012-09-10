@@ -36,8 +36,6 @@
 @implementation RKTableController
 
 @dynamic delegate;
-@synthesize sectionNameKeyPath = _sectionNameKeyPath;
-@synthesize sections = _sections;
 
 #pragma mark - Instantiation
 
@@ -61,7 +59,6 @@
 - (void)dealloc
 {
     [self removeObserver:self forKeyPath:@"sections"];
-
 }
 
 #pragma mark - Managing Sections
@@ -70,26 +67,6 @@
 - (NSMutableArray *)sectionsProxy
 {
     return [self mutableArrayValueForKey:@"sections"];
-}
-
-- (void)addSectionsObject:(id)section
-{
-    [self.sections addObject:section];
-}
-
-- (void)insertSections:(NSArray *)objects atIndexes:(NSIndexSet *)indexes
-{
-    [self.sections insertObjects:objects atIndexes:indexes];
-}
-
-- (void)removeSectionsAtIndexes:(NSIndexSet *)indexes
-{
-    [self.sections removeObjectsAtIndexes:indexes];
-}
-
-- (void)replaceSectionsAtIndexes:(NSIndexSet *)indexes withObjects:(NSArray *)objects
-{
-    [self.sections replaceObjectsAtIndexes:indexes withObjects:objects];
 }
 
 - (void)addSection:(RKTableSection *)section
