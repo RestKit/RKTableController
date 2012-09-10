@@ -98,7 +98,7 @@ enum {
     RKTableControllerStateOffline       = 1 << 4,
     RKTableControllerStateNotYetLoaded  = 0xFF000000
 };
-typedef NSUInteger RKTableControllerState;
+typedef NSInteger RKTableControllerState;
 
 /**
  RKAbstractTableController is an abstract base class for concrete table controller classes.
@@ -115,8 +115,8 @@ typedef NSUInteger RKTableControllerState;
 ///-----------------------------------------------------------------------------
 
 @property (nonatomic, weak)   id<RKAbstractTableControllerDelegate> delegate;
-@property (weak, nonatomic, readonly) UIViewController *viewController;
-@property (weak, nonatomic, readonly) UITableView *tableView;
+@property (nonatomic, weak, readonly) UIViewController *viewController;
+@property (nonatomic, weak, readonly) UITableView *tableView;
 @property (nonatomic, assign)   UITableViewRowAnimation defaultRowAnimation;
 
 @property (nonatomic, assign)   BOOL pullToRefreshEnabled;
@@ -171,12 +171,9 @@ typedef NSUInteger RKTableControllerState;
 
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 @property (nonatomic, strong) NSArray *responseDescriptors;
-@property (nonatomic, assign) BOOL autoRefreshFromNetwork;
-@property (nonatomic, assign) NSTimeInterval autoRefreshRate;
 
 - (void)loadTableWithRequest:(NSURLRequest *)request;
 - (void)cancelLoad;
-- (BOOL)isAutoRefreshNeeded;
 
 ///-----------------------------------------------------------------------------
 /// @name Inspecting Table State
@@ -186,7 +183,7 @@ typedef NSUInteger RKTableControllerState;
  The current state of the table controller. Note that the controller may be in more
  than one state (e.g. loading | empty).
  */
-@property (nonatomic, readonly, assign) RKTableControllerState state;
+@property (atomic, readonly, assign) RKTableControllerState state;
 
 /**
  An error object that was encountered as the result of an attempt to load

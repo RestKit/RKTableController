@@ -228,8 +228,7 @@
 
 - (id)objectRequestOperationWithRequest:(NSURLRequest *)request
 {
-    RKHTTPRequestOperation *requestOperation = [[RKHTTPRequestOperation alloc] initWithRequest:request];
-    RKManagedObjectRequestOperation *operation = [[RKManagedObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
+    RKManagedObjectRequestOperation *operation = [[RKManagedObjectRequestOperation alloc] initWithRequest:request responseDescriptors:self.responseDescriptors];
     operation.managedObjectContext = self.managedObjectContext;
     operation.fetchRequestBlocks = self.fetchRequestBlocks;
     operation.managedObjectCache = self.managedObjectCache;
@@ -248,9 +247,6 @@
         }
     }
     
-    if (! fetchRequest) {
-        NSLog(@"BREAKPOINT");
-    }
     NSAssert(fetchRequest, @"Failed to find a fetchRequest for URL: %@", self.request.URL);
     self.fetchRequest = fetchRequest;
 
@@ -283,7 +279,7 @@
     // is accurate when computing the table view data source responses
     [self.tableView reloadData];
 
-    if ([self isAutoRefreshNeeded] && [self isOnline]) {
+    if (!self.objectRequestOperation && self.request) {
         [self loadTableWithRequest:self.request];
     }
 }

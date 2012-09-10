@@ -29,6 +29,7 @@
 #import "RKObjectRequestOperation.h"
 #import "RKObjectMappingOperationDataSource.h"
 #import "RKManagedObjectRequestOperation.h"
+#import "RKHTTPUtilities.h"
 
 // Define logging component
 #undef RKLogComponent
@@ -49,6 +50,41 @@ NSString * const RKTableControllerDidBecomeOnline = @"RKTableControllerDidBecome
 NSString * const RKTableControllerDidBecomeOffline = @"RKTableControllerDidBecomeOffline";
 
 static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
+
+static inline NSString * RKStringFromBool(BOOL boolValue) { return boolValue ? @"YES" : @"NO"; }
+
+NSString * RKStringFromTableControllerState(RKTableControllerState state)
+{
+    BOOL isLoaded = (state & RKTableControllerStateNotYetLoaded) == 0;
+    BOOL isEmpty = (state & RKTableControllerStateEmpty);
+    BOOL isOffline = (state & RKTableControllerStateOffline);
+    BOOL isLoading = (state & RKTableControllerStateLoading);
+    BOOL isError = (state & RKTableControllerStateError);
+    
+    return [NSString stringWithFormat:@"isLoaded=%@, isEmpty=%@, isOffline=%@, isLoading=%@, isError=%@, isNormal=%@",
+            RKStringFromBool(isLoaded), RKStringFromBool(isEmpty), RKStringFromBool(isOffline),
+            RKStringFromBool(isLoading), RKStringFromBool(isError), RKStringFromBool(state == RKTableControllerStateNormal)];
+}
+
+NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableControllerState oldState, RKTableControllerState newState)
+{
+    BOOL loadedChanged = ((oldState ^ newState) & RKTableControllerStateNotYetLoaded);
+    BOOL emptyChanged = ((oldState ^ newState) & RKTableControllerStateEmpty);
+    BOOL offlineChanged = ((oldState ^ newState) & RKTableControllerStateOffline);
+    BOOL loadingChanged = ((oldState ^ newState) & RKTableControllerStateLoading);
+    BOOL errorChanged = ((oldState ^ newState) & RKTableControllerStateError);
+    BOOL normalChanged = (oldState == RKTableControllerStateNormal || newState == RKTableControllerStateNormal) && (oldState != newState);
+    
+    NSMutableArray *changeDescriptions = [NSMutableArray new];
+    if (loadedChanged) [changeDescriptions addObject:[NSString stringWithFormat:@"isLoaded=%@", RKStringFromBool((newState & RKTableControllerStateNotYetLoaded) == 0)]];
+    if (emptyChanged) [changeDescriptions addObject:[NSString stringWithFormat:@"isEmpty=%@", RKStringFromBool(newState & RKTableControllerStateEmpty)]];
+    if (offlineChanged) [changeDescriptions addObject:[NSString stringWithFormat:@"isOffline=%@", RKStringFromBool(newState & RKTableControllerStateOffline)]];
+    if (loadingChanged) [changeDescriptions addObject:[NSString stringWithFormat:@"isLoading=%@", RKStringFromBool(newState & RKTableControllerStateLoading)]];
+    if (errorChanged) [changeDescriptions addObject:[NSString stringWithFormat:@"isError=%@", RKStringFromBool(newState & RKTableControllerStateError)]];
+    if (normalChanged) [changeDescriptions addObject:[NSString stringWithFormat:@"isNormal=%@", RKStringFromBool(newState == RKTableControllerStateNormal)]];
+    
+    return [changeDescriptions componentsJoinedByString:@", "];
+}
 
 @interface RKAbstractTableController ()
 
@@ -109,10 +145,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
         _showsHeaderRowsWhenEmpty = YES;
         _showsFooterRowsWhenEmpty = YES;
 
-        // Setup autoRefreshRate to (effectively) never
-        _autoRefreshFromNetwork = NO;
-        _autoRefreshRate = NSTimeIntervalSince1970;
-
         // Setup key-value observing
         [self addObserver:self
                forKeyPath:@"state"
@@ -159,44 +191,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
     }
 }
 
-//- (void)setObjectManager:(RKObjectManager *)objectManager
-//{
-//    NSNotificationCenter *notificationCenter = [NSNotificationCenter defaultCenter];
-//
-//    // Remove observers
-//    if (_objectManager) {
-////        [notificationCenter removeObserver:self
-////                                      name:RKObjectManagerDidBecomeOfflineNotification
-////                                    object:_objectManager];
-////        [notificationCenter removeObserver:self
-////                                      name:RKObjectManagerDidBecomeOnlineNotification
-////                                    object:_objectManager];
-//    }
-//
-//    _objectManager = objectManager;
-//
-//    if (objectManager) {
-//        // Set observers
-////        [notificationCenter addObserver:self
-////                               selector:@selector(objectManagerConnectivityDidChange:)
-////                                   name:RKObjectManagerDidBecomeOnlineNotification
-////                                 object:objectManager];
-////        [notificationCenter addObserver:self
-////                               selector:@selector(objectManagerConnectivityDidChange:)
-////                                   name:RKObjectManagerDidBecomeOfflineNotification
-////                                 object:objectManager];
-//
-//        // Initialize online/offline state (if it is known)
-////        if (objectManager.networkStatus != RKObjectManagerNetworkStatusUnknown) {
-////            if (objectManager.isOnline) {
-////                self.state &= ~RKTableControllerStateOffline;
-////            } else {
-////                self.state |= RKTableControllerStateOffline;
-////            }
-////        }
-//    }
-//}
-
 - (void)setAutoResizesForKeyboard:(BOOL)autoResizesForKeyboard
 {
     if (_autoResizesForKeyboard != autoResizesForKeyboard) {
@@ -206,24 +200,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
         } else {
             self.keyboardScroller = nil;
         }
-    }
-}
-
-- (void)setAutoRefreshFromNetwork:(BOOL)autoRefreshFromNetwork
-{
-    if (_autoRefreshFromNetwork != autoRefreshFromNetwork) {
-        _autoRefreshFromNetwork = autoRefreshFromNetwork;
-//        if (_autoRefreshFromNetwork) {
-//            NSString *cachePath = [[NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0]
-//                                   stringByAppendingPathComponent:@"RKAbstractTableControllerCache"];
-//            _cache = [[RKCache alloc] initWithPath:cachePath subDirectories:nil];
-//        } else {
-//            if (_cache) {
-//                [_cache invalidateAll];
-//                [_cache release];
-//                _cache = nil;
-//            }
-//        }
     }
 }
 
@@ -272,12 +248,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
     } else {
         self.state &= ~RKTableControllerStateError;
     }
-}
-
-- (void)objectManagerConnectivityDidChange:(NSNotification *)notification
-{
-//    RKLogTrace(@"%@ received network status change notification: %@", self, [notification name]);
-//    [self setOffline:!self.objectManager.isOnline];
 }
 
 #pragma mark - Abstract Methods
@@ -652,8 +622,7 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 
 - (id)objectRequestOperationWithRequest:(NSURLRequest *)request
 {
-    RKHTTPRequestOperation *requestOperation = [[RKHTTPRequestOperation alloc] initWithRequest:request];
-    return [[RKObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
+    return [[RKObjectRequestOperation alloc] initWithRequest:request responseDescriptors:self.responseDescriptors];
 }
 
 - (void)loadTableWithRequest:(NSURLRequest *)request
@@ -666,6 +635,7 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
         [self.objectRequestOperation removeObserver:self forKeyPath:@"isFinished"];
     }
     
+    // No valid cached response available, let's go to the network
     RKObjectRequestOperation *objectRequestOperation = [self objectRequestOperationWithRequest:request];
     [objectRequestOperation addObserver:self forKeyPath:@"isExecuting" options:0 context:0];
     [objectRequestOperation addObserver:self forKeyPath:@"isCancelled" options:0 context:0];
@@ -705,11 +675,14 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
                 } else {
                     [self didFinishLoad];
                 }
+                
+                self.objectRequestOperation = nil;
             }
             
         } else if ([keyPath isEqualToString:@"isCancelled"]) {
             RKLogTrace(@"tableController %@ cancelled loading.", self);
             self.loading = NO;
+            self.objectRequestOperation = nil;
             
             if ([self.delegate respondsToSelector:@selector(tableControllerDidCancelLoad:)]) {
                 [self.delegate tableControllerDidCancelLoad:self];
@@ -722,84 +695,6 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 {
     [self.objectRequestOperation cancel];
 }
-
-- (NSDate *)lastUpdatedDate
-{
-    if (! self.objectRequestOperation) {
-        return nil;
-    }
-
-    if (_autoRefreshFromNetwork) {
-        // TODO: Update to use system cache!
-        
-//        NSAssert(_cache, @"Found a nil cache when trying to read our last loaded time");
-//        NSDictionary *lastUpdatedDates = [_cache dictionaryForCacheKey:lastUpdatedDateDictionaryKey];
-//        RKLogTrace(@"Last updated dates dictionary retrieved from tableController cache: %@", lastUpdatedDates);
-//        if (lastUpdatedDates) {
-//            NSString *absoluteURLString = [self.requestOperation.request.URL absoluteString];
-//            NSNumber *lastUpdatedTimeIntervalSince1970 = (NSNumber *)[lastUpdatedDates objectForKey:absoluteURLString];
-//            if (absoluteURLString && lastUpdatedTimeIntervalSince1970) {
-//                return [NSDate dateWithTimeIntervalSince1970:[lastUpdatedTimeIntervalSince1970 doubleValue]];
-//            }
-//        }
-    }
-    return nil;
-}
-
-- (BOOL)isAutoRefreshNeeded
-{
-    return YES;
-    
-    // TODO: Re-enable
-    BOOL isAutoRefreshNeeded = NO;
-    if (self.autoRefreshFromNetwork) {
-        isAutoRefreshNeeded = YES;
-        NSDate *lastUpdatedDate = [self lastUpdatedDate];
-        RKLogTrace(@"Last updated: %@", lastUpdatedDate);
-        if (lastUpdatedDate) {
-            RKLogTrace(@"-timeIntervalSinceNow=%f, autoRefreshRate=%f",
-                       -[lastUpdatedDate timeIntervalSinceNow], _autoRefreshRate);
-            isAutoRefreshNeeded = (-[lastUpdatedDate timeIntervalSinceNow] > _autoRefreshRate);
-        }
-    }
-    return isAutoRefreshNeeded;
-}
-
-#pragma mark - RKRequestDelegate & RKObjectLoaderDelegate methods
-
-//
-//- (void)requestDidTimeout:(RKRequest *)request
-//{
-//    RKLogTrace(@"tableController %@ timed out while loading.", self);
-//    self.loading = NO;
-//}
-//
-//- (void)request:(RKRequest *)request didLoadResponse:(RKResponse *)response
-//{
-//    RKLogTrace(@"tableController %@ finished loading.", self);
-//
-//    // Updated the lastUpdatedDate dictionary using the URL of the request
-//    if (self.autoRefreshFromNetwork) {
-//        NSAssert(_cache, @"Found a nil cache when trying to save our last loaded time");
-//        NSMutableDictionary *lastUpdatedDates = [[_cache dictionaryForCacheKey:lastUpdatedDateDictionaryKey] mutableCopy];
-//        if (lastUpdatedDates) {
-//            [_cache invalidateEntry:lastUpdatedDateDictionaryKey];
-//        } else {
-//            lastUpdatedDates = [[NSMutableDictionary alloc] init];
-//        }
-//        NSNumber *timeIntervalSince1970 = [NSNumber numberWithDouble:[[NSDate date] timeIntervalSince1970]];
-//        RKLogTrace(@"Setting timeIntervalSince1970=%@ for URL %@", timeIntervalSince1970, [request.URL absoluteString]);
-//        [lastUpdatedDates setObject:timeIntervalSince1970
-//                             forKey:[request.URL absoluteString]];
-//        [_cache writeDictionary:lastUpdatedDates withCacheKey:lastUpdatedDateDictionaryKey];
-//        [lastUpdatedDates release];
-//    }
-//}
-//
-//- (void)objectLoader:(RKObjectLoader *)objectLoader didFailWithError:(NSError *)error
-//{
-
-//}
 
 - (void)didStartLoad
 {
@@ -984,6 +879,7 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 {
     return (self.state & RKTableControllerStateOffline) != 0;
 }
+
 - (BOOL)isOnline
 {
     return ![self isOffline];
@@ -1081,10 +977,20 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
     }
 }
 
+- (NSString *)description
+{
+    return [NSString stringWithFormat:@"<%@: %p %@>", self.class, self, RKStringFromTableControllerState(self.state)];
+}
+
 - (void)updateTableViewForStateChange:(NSDictionary *)change
 {
     RKTableControllerState oldState = [[change valueForKey:NSKeyValueChangeOldKey] integerValue];
     RKTableControllerState newState = [[change valueForKey:NSKeyValueChangeNewKey] integerValue];
+    
+    if (oldState == newState) {
+        return;
+    }
+    NSLog(@"State Change for <%@: %p>: %@", self.class, self, RKStringDescribingTransitionFromTableControllerStateToState(oldState, newState));
 
     // Determine state transitions
     BOOL loadedChanged = ((oldState ^ newState) & RKTableControllerStateNotYetLoaded);
@@ -1123,7 +1029,7 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
     }
 
     // Remove the overlay if no longer in use
-    [self resetOverlayView];
+    [self resetOverlayView];        
 }
 
 #pragma mark - Pull to Refresh
@@ -1176,6 +1082,12 @@ static NSString *lastUpdatedDateDictionaryKey = @"lastUpdatedDateDictionaryKey";
 {
     // If we have already been loaded and we are loading again, a refresh is taking place...
     return [self isLoaded] && [self isLoading] && [self isOnline];
+}
+
+- (NSDate *)lastUpdatedDate
+{
+    NSCachedURLResponse *response = [[NSURLCache sharedURLCache] cachedResponseForRequest:self.request];
+    return [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Date"];
 }
 
 - (NSDate *)pullToRefreshDataSourceLastUpdated:(UIGestureRecognizer *)gesture
