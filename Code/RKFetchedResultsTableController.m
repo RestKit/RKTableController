@@ -249,7 +249,7 @@
     NSFetchRequest *fetchRequest = self.fetchRequest;
     if (!self.fetchRequest) {
         RKLogInfo(@"Determining fetch request from blocks for URL: '%@'", self.request.URL);
-        for (RKFetchRequestBlock fetchRequestBlock in self.fetchRequestBlocks) {
+        for (RKFetchRequestBlock fetchRequestBlock in [self.fetchRequestBlocks reverseObjectEnumerator]) {
             fetchRequest = fetchRequestBlock(self.request.URL);
             if (fetchRequest) break;
         }
