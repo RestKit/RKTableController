@@ -659,7 +659,10 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
 {
     if ([keyPath isEqualToString:@"state"]) {
-        [self updateTableViewForStateChange:change];
+        // State changes trigger UI updates
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self updateTableViewForStateChange:change];
+        });
     } else if ([keyPath isEqualToString:@"error"]) {
         [self setErrorState:(self.error != nil)];
     }
