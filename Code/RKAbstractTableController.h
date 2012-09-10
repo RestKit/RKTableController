@@ -67,6 +67,7 @@ extern NSString * const RKTableControllerDidBecomeOnline;
 extern NSString * const RKTableControllerDidBecomeOffline;
 
 @protocol RKAbstractTableControllerDelegate;
+@class RKObjectRequestOperation;
 
 /**
  @enum RKTableControllerState
@@ -262,6 +263,8 @@ typedef NSInteger RKTableControllerState;
 - (void)setOnPrepareCellForObjectAtIndexPath:(RKTableCellForObjectAtIndexPathBlock)onPrepareCellForObjectAtIndexPath;
 - (void)setOnWillDisplayCellForObjectAtIndexPath:(RKTableCellForObjectAtIndexPathBlock)onWillDisplayCellForObjectAtIndexPath;
 
+- (void)setFailureBlock:(void (^)(NSError *error))failureBlock;
+
 ///-----------------------------------------------------------------------------
 /// @name Model State Views
 ///-----------------------------------------------------------------------------
@@ -384,8 +387,8 @@ typedef NSInteger RKTableControllerState;
 @optional
 
 // Network
-//- (void)tableController:(RKAbstractTableController *)tableController willLoadTableWithObjectLoader:(RKObjectLoader *)objectLoader;
-//- (void)tableController:(RKAbstractTableController *)tableController didLoadTableWithObjectLoader:(RKObjectLoader *)objectLoader;
+- (void)tableController:(RKAbstractTableController *)tableController willLoadTableWithObjectRequestOperation:(RKObjectRequestOperation *)operation;
+- (void)tableController:(RKAbstractTableController *)tableController didLoadTableWithObjectRequestOperation:(RKObjectRequestOperation *)operation;
 
 // Basic States
 - (void)tableControllerDidStartLoad:(RKAbstractTableController *)tableController;

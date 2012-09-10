@@ -89,6 +89,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 @interface RKAbstractTableController ()
 
 @property (nonatomic, strong) RKKeyboardScroller *keyboardScroller;
+@property (nonatomic, copy) void (^failureBlock)(NSError *error);
 
 @end
 
@@ -641,6 +642,9 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     [objectRequestOperation addObserver:self forKeyPath:@"isCancelled" options:0 context:0];
     [objectRequestOperation addObserver:self forKeyPath:@"isFinished" options:0 context:0];
     
+    if ([self.delegate respondsToSelector:@selector(tableController:willLoadTableWithObjectRequestOperation:)]) {
+        [self.delegate tableController:self willLoadTableWithObjectRequestOperation:objectRequestOperation];
+    }
     if (self.operationQueue) {
         [self.operationQueue addOperation:objectRequestOperation];
     } else {
@@ -673,6 +677,10 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
                     RKLogError(@"tableController %@ failed network load with error: %@", self, self.objectRequestOperation.error);
                     [self didFailLoadWithError:self.objectRequestOperation.error];
                 } else {
+                    if ([self.delegate respondsToSelector:@selector(tableController:didLoadTableWithObjectRequestOperation:)]) {
+                        [self.delegate tableController:self didLoadTableWithObjectRequestOperation:self.objectRequestOperation];
+                    }
+
                     [self didFinishLoad];
                 }
                 
@@ -945,6 +953,8 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
         if ([self.delegate respondsToSelector:@selector(tableController:didFailLoadWithError:)]) {
             [self.delegate tableController:self didFailLoadWithError:self.error];
         }
+
+        if (self.failureBlock) self.failureBlock(self.error);
 
         NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.error forKey:RKErrorNotificationErrorKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:RKTableControllerDidLoadErrorNotification object:self userInfo:userInfo];
