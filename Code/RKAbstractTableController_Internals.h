@@ -29,7 +29,7 @@
 
 @property (weak, nonatomic, readwrite, assign) UITableView *tableView;
 @property (weak, nonatomic, readwrite, assign) UIViewController *viewController;
-@property (nonatomic, assign, readwrite) RKTableControllerState state;
+@property (atomic, assign, readwrite) RKTableControllerState state;
 @property (nonatomic, strong) NSURLRequest *request;
 @property (nonatomic, readwrite, strong) RKObjectRequestOperation *objectRequestOperation;
 @property (nonatomic, readwrite, strong) NSError *error;
