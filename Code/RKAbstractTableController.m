@@ -678,7 +678,9 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
                     [self didFailLoadWithError:self.objectRequestOperation.error];
                 } else {
                     if ([self.delegate respondsToSelector:@selector(tableController:didLoadTableWithObjectRequestOperation:)]) {
-                        [self.delegate tableController:self didLoadTableWithObjectRequestOperation:self.objectRequestOperation];
+                        dispatch_async(dispatch_get_main_queue(), ^{
+                            [self.delegate tableController:self didLoadTableWithObjectRequestOperation:self.objectRequestOperation];
+                        });
                     }
 
                     [self didFinishLoad];
@@ -693,7 +695,9 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
             self.objectRequestOperation = nil;
             
             if ([self.delegate respondsToSelector:@selector(tableControllerDidCancelLoad:)]) {
-                [self.delegate tableControllerDidCancelLoad:self];
+                dispatch_async(dispatch_get_main_queue(), ^{
+                    [self.delegate tableControllerDidCancelLoad:self];
+                });
             }
         }
     }
@@ -951,10 +955,14 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 {
     if ([self isError]) {
         if ([self.delegate respondsToSelector:@selector(tableController:didFailLoadWithError:)]) {
-            [self.delegate tableController:self didFailLoadWithError:self.error];
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [self.delegate tableController:self didFailLoadWithError:self.error];
+            });
         }
 
-        if (self.failureBlock) self.failureBlock(self.error);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            if (self.failureBlock) self.failureBlock(self.error);
+        });
 
         NSDictionary *userInfo = [NSDictionary dictionaryWithObject:self.error forKey:RKErrorNotificationErrorKey];
         [[NSNotificationCenter defaultCenter] postNotificationName:RKTableControllerDidLoadErrorNotification object:self userInfo:userInfo];
