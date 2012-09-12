@@ -516,12 +516,8 @@
 
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
+    [super scrollViewWillBeginDragging:scrollView];
     if (self.onScrollViewWillBeginDragging) self.onScrollViewWillBeginDragging(scrollView);
-}
-
-- (BOOL)scrollViewShouldScrollToTop:(UIScrollView *)scrollView
-{
-    if (self.onScrollViewShouldScrollToTop) self.onScrollViewShouldScrollToTop(scrollView);
 }
 
 - (void)scrollViewDidScrollToTop:(UIScrollView *)scrollView

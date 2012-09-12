@@ -68,7 +68,6 @@ typedef void (^RKFetchedResultsTableViewScrollViewBlock)(UIScrollView *scrollVie
 // UIScrollViewDelegate blocks
 @property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewDidScroll;
 @property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewWillBeginDragging;
-@property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewShouldScrollToTop;
 @property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewDidScrollToTop;
 @property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewWillBeginDecelerating;
 @property (nonatomic, copy) RKFetchedResultsTableViewScrollViewBlock onScrollViewDidEndDecelerating;
