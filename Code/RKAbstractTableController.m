@@ -491,7 +491,8 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSAssert(tableView == self.tableView, @"tableView:didSelectRowAtIndexPath: invoked with inappropriate tableView: %@", tableView);
+    NSAssert(tableView == self.tableView, @"%@ invoked with inappropriate tableView: %@", NSStringFromSelector(_cmd), tableView);
+
     cell.hidden = NO;
     id mappableObject = [self objectForRowAtIndexPath:indexPath];
     RKTableViewCellMapping *cellMapping = [self.cellMappings cellMappingForObject:mappableObject];
