@@ -73,6 +73,8 @@
 
 - (void)handleKeyboardNotification:(NSNotification *)notification
 {
+    if (!self.viewController.isViewLoaded || self.viewController.view.window == nil) return;
+
     NSDictionary *userInfo = [notification userInfo];
 
     CGRect keyboardEndFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
