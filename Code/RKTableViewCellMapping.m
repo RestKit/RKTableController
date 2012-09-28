@@ -23,7 +23,7 @@
 
 // Define logging component
 #undef RKLogComponent
-#define RKLogComponent lcl_cRestKitUI
+#define RKLogComponent RKlcl_cRestKitUI
 
 @interface RKTableViewCellMapping ()
 @property (nonatomic, strong) NSMutableArray *mutablePrepareCellBlocks;

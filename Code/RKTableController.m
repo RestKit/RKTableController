@@ -27,7 +27,7 @@
 
 // Define logging component
 #undef RKLogComponent
-#define RKLogComponent lcl_cRestKitUI
+#define RKLogComponent RKlcl_cRestKitUI
 
 @interface RKTableController ()
 @property (nonatomic, readwrite) NSMutableArray *sections;

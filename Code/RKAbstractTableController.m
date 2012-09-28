@@ -33,7 +33,7 @@
 
 // Define logging component
 #undef RKLogComponent
-#define RKLogComponent lcl_cRestKitUI
+#define RKLogComponent RKlcl_cRestKitUI
 
 /**
  Bounce pixels define how many pixels the cell swipe view is
