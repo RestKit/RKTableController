@@ -68,7 +68,6 @@
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-
 }
 
 - (void)handleKeyboardNotification:(NSNotification *)notification
@@ -123,8 +122,18 @@
                            firstResponderFrame.size.width, firstResponderFrame.size.height);
             }
 
-            if (!CGRectContainsPoint(nonKeyboardRect, firstResponderFrame.origin)) {
-                RKLogTrace(@"firstResponder (%@) is underneath keyboard. Beginning scroll of tableView to show", firstResponder);
+            RKLogTrace(@"firstResponder (%@) is underneath keyboard. Scrolling scroll view to show", firstResponder);
+            if ([self.scrollView isKindOfClass:[UITableView class]]) {
+                // Scroll to the row containing the point if this is a table view
+                NSIndexPath *indexPath = [(UITableView *)self.scrollView indexPathForRowAtPoint:firstResponderFrame.origin];
+                if (indexPath) {
+                    [(UITableView *)self.scrollView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                } else {
+                    // Fall back plan
+                    [self.scrollView scrollRectToVisible:firstResponderFrame animated:YES];
+                }
+            } else {
+                // Otherwise fall back to the vanilla scroll view flavor
                 [self.scrollView scrollRectToVisible:firstResponderFrame animated:YES];
             }
         }
