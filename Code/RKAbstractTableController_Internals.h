@@ -39,6 +39,9 @@
 @property (nonatomic, readonly) UIImageView *stateOverlayImageView;
 @property (nonatomic, strong) UIView *pullToRefreshHeaderView;
 
+@property (nonatomic, copy) NSString *(^titleForHeaderInSectionBlock)(NSInteger section);
+@property (nonatomic, copy) UIView *(^viewForHeaderInSectionBlock)(NSInteger section);
+
 #pragma mark - Subclass Load Event Hooks
 
 - (void)didStartLoad;

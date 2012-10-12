@@ -377,7 +377,12 @@
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
     NSAssert(tableView == self.tableView, @"tableView:titleForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
-    return [[_sections objectAtIndex:section] headerTitle];
+    
+    if (self.titleForHeaderInSectionBlock) {
+        return self.titleForHeaderInSectionBlock(section);
+    } else {
+        return [[_sections objectAtIndex:section] headerTitle];
+    }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
@@ -469,8 +474,12 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)sectionIndex
 {
     NSAssert(tableView == self.tableView, @"viewForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
-    RKTableSection *section = [self sectionAtIndex:sectionIndex];
-    return section.headerView;
+    if (self.viewForHeaderInSectionBlock) {
+        return self.viewForHeaderInSectionBlock(sectionIndex);
+    } else {
+        RKTableSection *section = [self sectionAtIndex:sectionIndex];
+        return section.headerView;
+    }
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)sectionIndex

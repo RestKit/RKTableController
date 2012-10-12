@@ -265,6 +265,20 @@ typedef NSInteger RKTableControllerState;
 
 - (void)setFailureBlock:(void (^)(NSError *error))failureBlock;
 
+/**
+ Sets a block to be invoked to obtain the title for the header in a given section.
+ 
+ @param block The block to be invoked when the table controller needs to obtain the title for a section header.
+ */
+- (void)setTitleForHeaderInSectionBlock:(NSString * (^)(NSInteger section))block;
+
+/**
+ Sets a block to be invoked to obtain a view to be used as the header for a given section.
+ 
+ @param block The block to be invoked when the table controller needs to obtain a view for a section header.
+ */
+- (void)setViewForHeaderInSectionBlock:(UIView * (^)(NSInteger section))block;
+
 ///-----------------------------------------------------------------------------
 /// @name Model State Views
 ///-----------------------------------------------------------------------------

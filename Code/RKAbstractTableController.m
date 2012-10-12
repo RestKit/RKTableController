@@ -90,9 +90,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 @property (nonatomic, strong) RKKeyboardScroller *keyboardScroller;
 @property (nonatomic, copy) void (^failureBlock)(NSError *error);
-
 @end
-
 
 @implementation RKAbstractTableController
 

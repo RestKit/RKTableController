@@ -58,7 +58,6 @@ typedef void (^RKFetchedResultsTableViewScrollViewBlock)(UIScrollView *scrollVie
 
 // Configuring Headers and Sections
 @property (nonatomic, assign) CGFloat heightForHeaderInSection;
-@property (nonatomic, copy) RKFetchedResultsTableViewViewForHeaderInSectionBlock onViewForHeaderInSection;
 @property (nonatomic, assign) BOOL showsSectionIndexTitles;
 
 // Sorting

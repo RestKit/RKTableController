@@ -403,8 +403,12 @@
 
 - (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-    id <NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
-    return [sectionInfo name];
+    if (self.titleForHeaderInSectionBlock) {
+        return self.titleForHeaderInSectionBlock(section);
+    } else {
+        id <NSFetchedResultsSectionInfo> sectionInfo = [[_fetchedResultsController sections] objectAtIndex:section];
+        return [sectionInfo name];
+    }
 }
 
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
@@ -492,11 +496,8 @@
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
 {
     NSAssert(tableView == self.tableView, @"viewForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
-    if (self.onViewForHeaderInSection) {
-        NSString *sectionTitle = [self tableView:self.tableView titleForHeaderInSection:section];
-        if (sectionTitle) {
-            return self.onViewForHeaderInSection(section, sectionTitle);
-        }
+    if (self.viewForHeaderInSectionBlock) {
+        return self.viewForHeaderInSectionBlock(section);
     }
     return nil;
 }
