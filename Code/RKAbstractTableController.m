@@ -1110,7 +1110,8 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 - (NSDate *)lastUpdatedDate
 {
-    NSCachedURLResponse *response = [[NSURLCache sharedURLCache] cachedResponseForRequest:self.request];
+    NSCachedURLResponse *cachedresponse = [[NSURLCache sharedURLCache] cachedResponseForRequest:self.request];
+    NSHTTPURLResponse *response = (NSHTTPURLResponse *)[cachedresponse response];
     return [[(NSHTTPURLResponse *)response allHeaderFields] objectForKey:@"Date"];
 }
 
