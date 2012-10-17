@@ -32,6 +32,19 @@
 #undef RKLogComponent
 #define RKLogComponent RKlcl_cRestKitUI
 
+// Determines if a mapped attribute/relationship has been changed to avoid unnecessary cell refreshes for update events
+static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *managedObject, RKTableViewCellMapping *cellMapping)
+{
+    NSArray *sourceAttributeKeyPaths = [cellMapping.attributeMappings valueForKeyPath:@"sourceKeyPath"];
+    NSMutableArray *attributeOrRelationshipKeyPathComponents = [NSMutableArray arrayWithCapacity:[sourceAttributeKeyPaths count]];
+    [sourceAttributeKeyPaths enumerateObjectsUsingBlock:^(NSString *keyPath, NSUInteger idx, BOOL *stop) {
+        NSArray *keypathComponents = [keyPath componentsSeparatedByString:@"."];
+        [attributeOrRelationshipKeyPathComponents addObject:[keypathComponents objectAtIndex:0]];
+    }];
+    NSArray *changedAttributeAndRelationshipKeys = [[managedObject changedValuesForCurrentEvent] allKeys];
+    return ([changedAttributeAndRelationshipKeys firstObjectCommonWithArray:attributeOrRelationshipKeyPathComponents] != nil);
+}
+
 @interface RKFetchedResultsTableController ()
 
 @property (nonatomic, assign) BOOL isEmptyBeforeAnimation;
@@ -657,10 +670,14 @@
                                   withRowAnimation:UITableViewRowAnimationFade];
             break;
 
-        case NSFetchedResultsChangeUpdate:
-            [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:adjIndexPath]
-                                  withRowAnimation:UITableViewRowAnimationFade];
+        case NSFetchedResultsChangeUpdate: {
+            RKTableViewCellMapping *cellMapping = [self.cellMappings cellMappingForObject:anObject];
+            if (RKShouldReloadRowForManagedObjectWithCellMapping(anObject, cellMapping)) {
+                [self.tableView reloadRowsAtIndexPaths:[NSArray arrayWithObject:adjIndexPath]
+                                      withRowAnimation:UITableViewRowAnimationFade];
+            }
             break;
+        }
 
         case NSFetchedResultsChangeMove:
             [self.tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:adjIndexPath]
