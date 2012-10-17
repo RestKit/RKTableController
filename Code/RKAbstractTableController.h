@@ -279,6 +279,34 @@ typedef NSInteger RKTableControllerState;
  */
 - (void)setViewForHeaderInSectionBlock:(UIView * (^)(NSInteger section))block;
 
+/**
+ Sets a block to be invoked to obtain the height for a given section header.
+
+ @param block The block to be invoked when the table controller needs to obtain the height for a section header.
+ */
+- (void)setHeightForHeaderInSectionBlock:(CGFloat (^)(NSInteger section))block;
+
+/**
+ Sets a block to be invoked to obtain the title for the footer in a given section.
+
+ @param block The block to be invoked when the table controller needs to obtain the title for a section footer.
+ */
+- (void)setTitleForFooterInSectionBlock:(NSString * (^)(NSInteger section))block;
+
+/**
+ Sets a block to be invoked to obtain a view to be used as the footer for a given section.
+
+ @param block The block to be invoked when the table controller needs to obtain a view for a section footer.
+ */
+- (void)setViewForFooterInSectionBlock:(UIView * (^)(NSInteger section))block;
+
+/**
+ Sets a block to be invoked to obtain the height for a given section footer.
+
+ @param block The block to be invoked when the table controller needs to obtain the height for a section footer.
+ */
+- (void)setHeightForFooterInSectionBlock:(CGFloat (^)(NSInteger section))block;
+
 ///-----------------------------------------------------------------------------
 /// @name Model State Views
 ///-----------------------------------------------------------------------------

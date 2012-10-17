@@ -388,7 +388,11 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
     NSAssert(tableView == self.tableView, @"tableView:titleForFooterInSection: invoked with inappropriate tableView: %@", tableView);
-    return [[_sections objectAtIndex:section] footerTitle];
+    if (self.titleForFooterInSectionBlock) {
+        return self.titleForFooterInSectionBlock(section);
+    } else {
+        return [[_sections objectAtIndex:section] footerTitle];
+    }
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath
@@ -441,6 +445,8 @@
     NSAssert(tableView == self.tableView, @"heightForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
     if ([self.delegate respondsToSelector:@selector(tableController:heightForHeaderInSection:)]) {
         return [self.delegate tableController:self heightForHeaderInSection:sectionIndex];
+    } else if (self.heightForHeaderInSectionBlock) {
+        return self.heightForHeaderInSectionBlock(sectionIndex);
     } else {
         RKTableSection *section = [self sectionAtIndex:sectionIndex];
         
@@ -462,12 +468,28 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)sectionIndex
 {
+    CGFloat tableViewSectionFooterDefaultHeight = 22.0f;
     NSAssert(tableView == self.tableView, @"heightForFooterInSection: invoked with inappropriate tableView: %@", tableView);
     if ([self.delegate respondsToSelector:@selector(tableController:heightForFooterInSection:)]) {
         return [self.delegate tableController:self heightForFooterInSection:sectionIndex];
+    } else if (self.heightForFooterInSectionBlock) {
+        return self.heightForFooterInSectionBlock(sectionIndex);
     } else {
         RKTableSection *section = [self sectionAtIndex:sectionIndex];
-        return section.footerHeight;
+
+        if (section.footerHeight) {
+            return section.footerHeight;
+        } else if (section.footerTitle) {
+            return self.tableView.sectionFooterHeight;
+        } else if (section.footerView) {
+            if (self.tableView.sectionFooterHeight != tableViewSectionFooterDefaultHeight) {
+                return self.tableView.sectionFooterHeight;
+            } else {
+                return section.footerView.frame.size.height;
+            }
+        } else {
+            return 0;
+        }
     }
 }
 
@@ -485,8 +507,12 @@
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)sectionIndex
 {
     NSAssert(tableView == self.tableView, @"viewForFooterInSection: invoked with inappropriate tableView: %@", tableView);
-    RKTableSection *section = [self sectionAtIndex:sectionIndex];
-    return section.footerView;
+    if (self.viewForFooterInSectionBlock) {
+        return self.viewForFooterInSectionBlock(sectionIndex);
+    } else {
+        RKTableSection *section = [self sectionAtIndex:sectionIndex];
+        return section.footerView;
+    }
 }
 
 - (BOOL)isConsideredEmpty

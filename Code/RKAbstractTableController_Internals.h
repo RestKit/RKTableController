@@ -41,6 +41,10 @@
 
 @property (nonatomic, copy) NSString *(^titleForHeaderInSectionBlock)(NSInteger section);
 @property (nonatomic, copy) UIView *(^viewForHeaderInSectionBlock)(NSInteger section);
+@property (nonatomic, copy) CGFloat (^heightForHeaderInSectionBlock)(NSInteger section);
+@property (nonatomic, copy) NSString *(^titleForFooterInSectionBlock)(NSInteger section);
+@property (nonatomic, copy) UIView *(^viewForFooterInSectionBlock)(NSInteger section);
+@property (nonatomic, copy) CGFloat (^heightForFooterInSectionBlock)(NSInteger section);
 
 #pragma mark - Subclass Load Event Hooks
 

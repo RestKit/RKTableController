@@ -414,6 +414,9 @@
 - (NSString *)tableView:(UITableView *)tableView titleForFooterInSection:(NSInteger)section
 {
     NSAssert(tableView == self.tableView, @"tableView:titleForFooterInSection: invoked with inappropriate tableView: %@", tableView);
+    if (self.titleForFooterInSectionBlock) {
+        return self.titleForFooterInSectionBlock(section);
+    }
     return nil;
 }
 
@@ -484,13 +487,19 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
     NSAssert(tableView == self.tableView, @"heightForHeaderInSection: invoked with inappropriate tableView: %@", tableView);
+    if (self.heightForHeaderInSectionBlock) {
+        return self.heightForHeaderInSectionBlock(section);
+    }
     return self.heightForHeaderInSection;
 }
 
-- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)sectionIndex
+- (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section
 {
     NSAssert(tableView == self.tableView, @"heightForFooterInSection: invoked with inappropriate tableView: %@", tableView);
-    return 0;
+    if (self.heightForFooterInSectionBlock) {
+        return self.heightForFooterInSectionBlock(section);
+    }
+    return self.heightForFooterInSection;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -502,9 +511,12 @@
     return nil;
 }
 
-- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)sectionIndex
+- (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section
 {
     NSAssert(tableView == self.tableView, @"viewForFooterInSection: invoked with inappropriate tableView: %@", tableView);
+    if (self.viewForFooterInSectionBlock) {
+        return self.viewForFooterInSectionBlock(section);
+    }
     return nil;
 }
 
