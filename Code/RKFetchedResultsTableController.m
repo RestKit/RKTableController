@@ -459,7 +459,11 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
         if ([managedObject valueForKeyPath:primaryKeyAttributeName]) {
             // TODO: This should probably be done via delegation. We are coupled to the shared manager.
             RKLogTrace(@"About to fire a delete request for managedObject: %@", managedObject);
-            [[RKObjectManager sharedManager] deleteObject:managedObject path:nil parameters:nil success:nil failure:^(RKObjectRequestOperation *operation, NSError *error) {
+            [[RKObjectManager sharedManager] deleteObject:managedObject path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+                if ([self.delegate respondsToSelector:@selector(tableController:didDeleteObject:atIndexPath:)]) {
+                    [self.delegate tableController:self didDeleteObject:managedObject atIndexPath:indexPath];
+                }
+            } failure:^(RKObjectRequestOperation *operation, NSError *error) {
                 RKLogError(@"Failed to delete managed object deleted by table controller. Error: %@", error);
             }];
         } else {
@@ -472,6 +476,10 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
                 [managedObjectContext save:&error];
                 if (error) {
                     RKLogError(@"Failed to save managedObjectContext after a delete with error: %@", error);
+                } else {
+                    if ([self.delegate respondsToSelector:@selector(tableController:didDeleteObject:atIndexPath:)]) {
+                        [self.delegate tableController:self didDeleteObject:managedObject atIndexPath:indexPath];
+                    }
                 }
             }];
         }
