@@ -55,6 +55,7 @@ typedef void (^RKFetchedResultsTableViewScrollViewBlock)(UIScrollView *scrollVie
 @property (nonatomic, copy) NSString *sectionNameKeyPath;
 @property (nonatomic, copy) NSString *cacheName;
 @property (nonatomic, strong, readonly) NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, assign) BOOL deletesOrphanedObjects;
 
 // Configuring Headers and Sections
 @property (nonatomic, assign) CGFloat heightForHeaderInSection;

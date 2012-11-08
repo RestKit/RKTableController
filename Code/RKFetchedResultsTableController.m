@@ -60,6 +60,15 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
 
 @dynamic delegate;
 
+- (id)initWithTableView:(UITableView *)tableView viewController:(UIViewController *)viewController
+{
+    self = [super initWithTableView:tableView viewController:viewController];
+    if (self) {
+        self.deletesOrphanedObjects = YES;
+    }
+    return self;
+}
+
 - (void)dealloc
 {
     self.fetchedResultsController.delegate = nil;
@@ -253,6 +262,7 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
     operation.managedObjectContext = self.managedObjectContext;
     operation.fetchRequestBlocks = self.fetchRequestBlocks;
     operation.managedObjectCache = self.managedObjectCache;
+    operation.deletesOrphanedObjects = self.deletesOrphanedObjects;
     return operation;
 }
 
