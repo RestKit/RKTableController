@@ -173,6 +173,7 @@ typedef NSInteger RKTableControllerState;
 @property (nonatomic, strong) NSOperationQueue *operationQueue;
 @property (nonatomic, strong) NSArray *responseDescriptors;
 
+- (void)setHTTPOperationClass:(Class)operationClass;
 - (void)loadTableWithRequest:(NSURLRequest *)request;
 - (void)cancelLoad;
 

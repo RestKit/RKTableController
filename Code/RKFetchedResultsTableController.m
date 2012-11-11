@@ -51,6 +51,7 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
 @property (nonatomic, strong, readwrite) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, strong) NSArray *arraySortedFetchedObjects;
 @property (nonatomic, assign, getter = hasRequestChanged) BOOL requestChanged;
+@property (nonatomic, readonly) Class HTTPOperationClass;
 
 - (BOOL)performFetch:(NSError **)error;
 - (void)updateSortedArray;
@@ -59,6 +60,7 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
 @implementation RKFetchedResultsTableController
 
 @dynamic delegate;
+@dynamic HTTPOperationClass;
 
 - (id)initWithTableView:(UITableView *)tableView viewController:(UIViewController *)viewController
 {
@@ -258,7 +260,8 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
 
 - (id)objectRequestOperationWithRequest:(NSURLRequest *)request
 {
-    RKManagedObjectRequestOperation *operation = [[RKManagedObjectRequestOperation alloc] initWithRequest:request responseDescriptors:self.responseDescriptors];
+    RKHTTPRequestOperation *requestOperation = [[[self HTTPOperationClass] alloc] initWithRequest:request];
+    RKManagedObjectRequestOperation *operation = [[RKManagedObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
     operation.managedObjectContext = self.managedObjectContext;
     operation.fetchRequestBlocks = self.fetchRequestBlocks;
     operation.managedObjectCache = self.managedObjectCache;

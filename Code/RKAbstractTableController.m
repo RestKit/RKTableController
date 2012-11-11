@@ -90,6 +90,8 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 @property (nonatomic, strong) RKKeyboardScroller *keyboardScroller;
 @property (nonatomic, copy) void (^failureBlock)(NSError *error);
+@property (nonatomic, strong) Class HTTPOperationClass;
+
 @end
 
 @implementation RKAbstractTableController
@@ -620,8 +622,14 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 #pragma mark - Network Table Loading
 
+- (Class)HTTPOperationClass
+{
+    return _HTTPOperationClass ?: [RKHTTPRequestOperation class];
+}
+
 - (id)objectRequestOperationWithRequest:(NSURLRequest *)request
 {
+    RKHTTPRequestOperation *requestOperation = [[[self HTTPOperationClass] alloc] initWithRequest:request];
     return [[RKObjectRequestOperation alloc] initWithRequest:request responseDescriptors:self.responseDescriptors];
 }
 
