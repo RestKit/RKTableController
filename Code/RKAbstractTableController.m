@@ -630,7 +630,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 - (id)objectRequestOperationWithRequest:(NSURLRequest *)request
 {
     RKHTTPRequestOperation *requestOperation = [[[self HTTPOperationClass] alloc] initWithRequest:request];
-    return [[RKObjectRequestOperation alloc] initWithRequest:request responseDescriptors:self.responseDescriptors];
+    return [[RKObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
 }
 
 - (void)loadTableWithRequest:(NSURLRequest *)request
