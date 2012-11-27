@@ -12,6 +12,7 @@
 
 #import "RKTableController.h"
 #import "RKFetchedResultsTableController.h"
+#import "RKManagedObjectStore.h"
 
 @implementation RKObjectManager (RKTableController)
 
