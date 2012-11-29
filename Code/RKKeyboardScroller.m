@@ -77,49 +77,36 @@
     NSDictionary *userInfo = [notification userInfo];
 
     CGRect keyboardEndFrame = [[userInfo objectForKey:UIKeyboardFrameEndUserInfoKey] CGRectValue];
-    CGFloat heightForViewShift = keyboardEndFrame.size.height;
-    RKLogTrace(@"keyboardEndFrame.size.height=%f, heightForViewShift=%f",
-               keyboardEndFrame.size.height, heightForViewShift);
+    RKLogTrace(@"keyboardEndFrame=%@", NSStringFromCGRect(keyboardEndFrame));
 
-    CGFloat bottomBarOffset = 0.0;
-    UINavigationController *navigationController = self.viewController.navigationController;
-    if (navigationController && navigationController.toolbar && !navigationController.toolbarHidden) {
-        bottomBarOffset += navigationController.toolbar.frame.size.height;
-        RKLogTrace(@"Found a visible toolbar. Reducing size of heightForViewShift by=%f", bottomBarOffset);
-    }
+    CGRect scrollViewFrame = self.scrollView.frame;
+    RKLogTrace(@"scrollViewFrame=%@", NSStringFromCGRect(scrollViewFrame));
 
-    UITabBarController *tabBarController = self.viewController.tabBarController;
-    if (tabBarController && tabBarController.tabBar && !self.viewController.hidesBottomBarWhenPushed) {
-        bottomBarOffset += tabBarController.tabBar.frame.size.height;
-        RKLogTrace(@"Found a visible tabBar. Reducing size of heightForViewShift by=%f", bottomBarOffset);
-    }
+    CGRect convertedScrollViewFrame = [self.scrollView.superview convertRect:scrollViewFrame toView:nil];
+    RKLogTrace(@"convertedScrollViewFrame=%@", NSStringFromCGRect(convertedScrollViewFrame));
+
+    CGRect keyboardOverlap = CGRectIntersection(convertedScrollViewFrame, keyboardEndFrame);
+    RKLogTrace(@"keyboardOverlap=%@", NSStringFromCGRect(keyboardOverlap));
 
     if ([[notification name] isEqualToString:UIKeyboardWillShowNotification]) {
         [UIView beginAnimations:nil context:nil];
         [UIView setAnimationDuration:0.2];
 
-        UIEdgeInsets contentInsets = UIEdgeInsetsMake(0, 0, (heightForViewShift - bottomBarOffset), 0);
-        self.scrollView.contentInset = contentInsets;
-        self.scrollView.scrollIndicatorInsets = contentInsets;
-
-        CGRect nonKeyboardRect = self.scrollView.frame;
-        nonKeyboardRect.size.height -= heightForViewShift;
-        RKLogTrace(@"Searching for a firstResponder not inside our nonKeyboardRect (%f, %f, %f, %f)",
-                   nonKeyboardRect.origin.x, nonKeyboardRect.origin.y,
-                   nonKeyboardRect.size.width, nonKeyboardRect.size.height);
+        if (! CGRectEqualToRect(keyboardOverlap, CGRectNull)) {
+            UIEdgeInsets contentInsets = UIEdgeInsetsMake(0, 0, keyboardOverlap.size.height, 0);
+            self.scrollView.contentInset = contentInsets;
+            self.scrollView.scrollIndicatorInsets = contentInsets;
+        }
 
         UIView *firstResponder = [self.scrollView findFirstResponder];
         if (firstResponder) {
             CGRect firstResponderFrame = firstResponder.frame;
-            RKLogTrace(@"Found firstResponder=%@ at (%f, %f, %f, %f)", firstResponder,
-                       firstResponderFrame.origin.x, firstResponderFrame.origin.y,
-                       firstResponderFrame.size.width, firstResponderFrame.size.width);
+            RKLogTrace(@"Found firstResponder=%@ at %@", firstResponder, NSStringFromCGRect(firstResponderFrame));
 
             if (![firstResponder.superview isEqual:self.scrollView]) {
                 firstResponderFrame = [firstResponder.superview convertRect:firstResponderFrame toView:self.scrollView];
-                RKLogTrace(@"firstResponder (%@) frame is not in viewToBeResized's coordinate system. Coverted to (%f, %f, %f, %f)",
-                           firstResponder, firstResponderFrame.origin.x, firstResponderFrame.origin.y,
-                           firstResponderFrame.size.width, firstResponderFrame.size.height);
+                RKLogTrace(@"firstResponder (%@) frame is not in self.scrollView's coordinate system. Coverted to %@",
+                           firstResponder, NSStringFromCGRect(firstResponderFrame));
             }
 
             RKLogTrace(@"firstResponder (%@) is underneath keyboard. Scrolling scroll view to show", firstResponder);
