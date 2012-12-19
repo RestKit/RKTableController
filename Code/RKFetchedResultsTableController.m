@@ -25,7 +25,6 @@
 #import "RKEntityMapping.h"
 #import "RKLog.h"
 #import "RKManagedObjectRequestOperation.h"
-#import "NSEntityDescription+RKAdditions.h"
 #import "RKObjectManager.h"
 
 // Define logging component
@@ -468,18 +467,16 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
     if (self.canEditRows && editingStyle == UITableViewCellEditingStyleDelete) {
         NSManagedObject *managedObject = [self objectForRowAtIndexPath:indexPath];
 
-        NSString *primaryKeyAttributeName = managedObject.entity.primaryKeyAttributeName;
-        if ([managedObject valueForKeyPath:primaryKeyAttributeName]) {
-            // TODO: This should probably be done via delegation. We are coupled to the shared manager.
-            RKLogTrace(@"About to fire a delete request for managedObject: %@", managedObject);
-            [[RKObjectManager sharedManager] deleteObject:managedObject path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
-                if ([self.delegate respondsToSelector:@selector(tableController:didDeleteObject:atIndexPath:)]) {
-                    [self.delegate tableController:self didDeleteObject:managedObject atIndexPath:indexPath];
-                }
-            } failure:^(RKObjectRequestOperation *operation, NSError *error) {
-                RKLogError(@"Failed to delete managed object deleted by table controller. Error: %@", error);
-            }];
-        } else {
+        // TODO: This should probably be done via delegation. We are coupled to the shared manager.
+        RKLogTrace(@"About to fire a delete request for managedObject: %@", managedObject);
+        [[RKObjectManager sharedManager] deleteObject:managedObject path:nil parameters:nil success:^(RKObjectRequestOperation *operation, RKMappingResult *mappingResult) {
+            if ([self.delegate respondsToSelector:@selector(tableController:didDeleteObject:atIndexPath:)]) {
+                [self.delegate tableController:self didDeleteObject:managedObject atIndexPath:indexPath];
+            }
+        } failure:^(RKObjectRequestOperation *operation, NSError *error) {
+            RKLogError(@"Failed to delete managed object deleted by table controller. Error: %@", error);
+            
+            // TODO: This incorrect. Its not a great assumption.
             RKLogTrace(@"About to locally delete managedObject: %@", managedObject);
             NSManagedObjectContext *managedObjectContext = managedObject.managedObjectContext;
             [managedObjectContext performBlock:^{
@@ -495,7 +492,7 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
                     }
                 }
             }];
-        }
+        }];
     }
 }
 
