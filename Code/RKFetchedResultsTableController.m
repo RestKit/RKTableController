@@ -587,7 +587,7 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
         return self.emptyItem;
     } else if ([self isHeaderIndexPath:indexPath]) {
         NSUInteger row = ([self isEmpty] && self.emptyItem) ? (indexPath.row - 1) : indexPath.row;
-        return [self.headerItems objectAtIndex:row];
+        return (row < [self.headerItems count]) ? [self.headerItems objectAtIndex:row] : nil;
     } else if ([self isFooterIndexPath:indexPath]) {
         id <NSFetchedResultsSectionInfo> sectionInfo = [[self.fetchedResultsController sections] objectAtIndex:indexPath.section];
         NSUInteger footerRow = (indexPath.row - sectionInfo.numberOfObjects);
@@ -595,10 +595,11 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
             footerRow -= (![self isEmpty] || self.showsHeaderRowsWhenEmpty) ? [self.headerItems count] : 0;
             footerRow -= ([self isEmpty] && self.emptyItem) ? 1 : 0;
         }
-        return [self.footerItems objectAtIndex:footerRow];
+        return (footerRow < [self.footerItems count]) ? [self.footerItems objectAtIndex:footerRow] : nil;
 
     } else if (self.sortSelector || self.sortComparator) {
-        return [self.arraySortedFetchedObjects objectAtIndex:[self fetchedResultsIndexPathForIndexPath:indexPath].row];
+        NSIndexPath *indexPath = [self fetchedResultsIndexPathForIndexPath:indexPath];
+        return (indexPath.row < [self.arraySortedFetchedObjects count]) ? [self.arraySortedFetchedObjects objectAtIndex:indexPath.row] : nil;
     }
     
     NSIndexPath *fetchedResultsIndexPath = [self fetchedResultsIndexPathForIndexPath:indexPath];
