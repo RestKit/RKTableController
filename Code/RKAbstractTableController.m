@@ -160,11 +160,11 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 }
 
 - (void)cleanupObjectRequestOperation
-{
-    [self.objectRequestOperation cancel];
+{    
     [self.objectRequestOperation removeObserver:self forKeyPath:@"isExecuting"];
     [self.objectRequestOperation removeObserver:self forKeyPath:@"isCancelled"];
     [self.objectRequestOperation removeObserver:self forKeyPath:@"isFinished"];
+    [self.objectRequestOperation cancel];
 }
 
 - (void)dealloc
