@@ -159,6 +159,14 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     return self;
 }
 
+- (void)cleanupObjectRequestOperation
+{
+    [self.objectRequestOperation cancel];
+    [self.objectRequestOperation removeObserver:self forKeyPath:@"isExecuting"];
+    [self.objectRequestOperation removeObserver:self forKeyPath:@"isCancelled"];
+    [self.objectRequestOperation removeObserver:self forKeyPath:@"isFinished"];
+}
+
 - (void)dealloc
 {
     // Disconnect from the tableView
@@ -174,7 +182,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     [self removeObserver:self forKeyPath:@"error"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    [self.objectRequestOperation cancel];
+    [self cleanupObjectRequestOperation];
 }
 
 - (void)setTableView:(UITableView *)tableView
@@ -636,12 +644,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 - (void)loadTableWithRequest:(NSURLRequest *)request
 {
     // Cancel any existing load
-    if (self.objectRequestOperation) {
-        [self.objectRequestOperation cancel];
-        [self.objectRequestOperation removeObserver:self forKeyPath:@"isExecuting"];
-        [self.objectRequestOperation removeObserver:self forKeyPath:@"isCancelled"];
-        [self.objectRequestOperation removeObserver:self forKeyPath:@"isFinished"];
-    }
+    [self cleanupObjectRequestOperation];
     
     // No valid cached response available, let's go to the network
     RKObjectRequestOperation *objectRequestOperation = [self objectRequestOperationWithRequest:request];
