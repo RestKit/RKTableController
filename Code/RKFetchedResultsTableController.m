@@ -598,8 +598,8 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
         return (footerRow < [self.footerItems count]) ? [self.footerItems objectAtIndex:footerRow] : nil;
 
     } else if (self.sortSelector || self.sortComparator) {
-        NSIndexPath *indexPath = [self fetchedResultsIndexPathForIndexPath:indexPath];
-        return (indexPath.row < [self.arraySortedFetchedObjects count]) ? [self.arraySortedFetchedObjects objectAtIndex:indexPath.row] : nil;
+        NSIndexPath *fetchedResultsIndexPath = [self fetchedResultsIndexPathForIndexPath:indexPath];
+        return (fetchedResultsIndexPath.row < [self.arraySortedFetchedObjects count]) ? [self.arraySortedFetchedObjects objectAtIndex:fetchedResultsIndexPath.row] : nil;
     }
     
     NSIndexPath *fetchedResultsIndexPath = [self fetchedResultsIndexPathForIndexPath:indexPath];
