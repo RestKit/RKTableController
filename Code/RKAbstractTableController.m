@@ -159,14 +159,6 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     return self;
 }
 
-- (void)cleanupObjectRequestOperation
-{    
-    [self.objectRequestOperation removeObserver:self forKeyPath:@"isExecuting"];
-    [self.objectRequestOperation removeObserver:self forKeyPath:@"isCancelled"];
-    [self.objectRequestOperation removeObserver:self forKeyPath:@"isFinished"];
-    [self.objectRequestOperation cancel];
-}
-
 - (void)dealloc
 {
     // Disconnect from the tableView
@@ -182,7 +174,7 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
     [self removeObserver:self forKeyPath:@"error"];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    [self cleanupObjectRequestOperation];
+    self.objectRequestOperation = nil;
 }
 
 - (void)setTableView:(UITableView *)tableView
@@ -256,6 +248,22 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
         self.state |= RKTableControllerStateError;
     } else {
         self.state &= ~RKTableControllerStateError;
+    }
+}
+
+- (void)setObjectRequestOperation:(RKObjectRequestOperation *)objectRequestOperation
+{
+    [_objectRequestOperation removeObserver:self forKeyPath:@"isExecuting"];
+    [_objectRequestOperation removeObserver:self forKeyPath:@"isCancelled"];
+    [_objectRequestOperation removeObserver:self forKeyPath:@"isFinished"];
+    [_objectRequestOperation cancel];
+
+    _objectRequestOperation = objectRequestOperation;
+
+    if (_objectRequestOperation) {
+        [_objectRequestOperation addObserver:self forKeyPath:@"isExecuting" options:0 context:0];
+        [_objectRequestOperation addObserver:self forKeyPath:@"isCancelled" options:0 context:0];
+        [_objectRequestOperation addObserver:self forKeyPath:@"isFinished" options:0 context:0];
     }
 }
 
@@ -643,15 +651,9 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 - (void)loadTableWithRequest:(NSURLRequest *)request
 {
-    // Cancel any existing load
-    [self cleanupObjectRequestOperation];
-    
     // No valid cached response available, let's go to the network
     RKObjectRequestOperation *objectRequestOperation = [self objectRequestOperationWithRequest:request];
-    [objectRequestOperation addObserver:self forKeyPath:@"isExecuting" options:0 context:0];
-    [objectRequestOperation addObserver:self forKeyPath:@"isCancelled" options:0 context:0];
-    [objectRequestOperation addObserver:self forKeyPath:@"isFinished" options:0 context:0];
-    
+
     if ([self.delegate respondsToSelector:@selector(tableController:willLoadTableWithObjectRequestOperation:)]) {
         [self.delegate tableController:self willLoadTableWithObjectRequestOperation:objectRequestOperation];
     }
@@ -841,7 +843,6 @@ NSString * RKStringDescribingTransitionFromTableControllerStateToState(RKTableCo
 
 - (void)showImageInOverlay:(UIImage *)image
 {
-    NSAssert(self.tableView, @"Cannot add an overlay image to a nil tableView");
     if (! _stateOverlayImageView) {
         _stateOverlayImageView = [[UIImageView alloc] initWithFrame:CGRectZero];
         _stateOverlayImageView.opaque = YES;
