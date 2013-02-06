@@ -34,13 +34,13 @@
 /**
  The view controller containing the target scroll view within its managed view hierarchy.
  */
-@property (nonatomic, strong, readonly) UIViewController *viewController;
+@property (nonatomic, weak, readonly) UIViewController *viewController;
 
 /**
  The scroll view that is to be scrolled in response to the appearance and disappearance of
  the keyboard.
  */
-@property (nonatomic, strong, readonly) UIScrollView *scrollView;
+@property (nonatomic, weak, readonly) UIScrollView *scrollView;
 
 /**
  Instantiates the receiver with a view controller and scroll view that is to be scrolled

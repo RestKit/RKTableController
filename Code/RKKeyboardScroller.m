@@ -28,8 +28,8 @@
 
 @interface RKKeyboardScroller ()
 
-@property (nonatomic, strong, readwrite) UIViewController *viewController;
-@property (nonatomic, strong, readwrite) UIScrollView *scrollView;
+@property (nonatomic, weak, readwrite) UIViewController *viewController;
+@property (nonatomic, weak, readwrite) UIScrollView *scrollView;
 @end
 
 @implementation RKKeyboardScroller
