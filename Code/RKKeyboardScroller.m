@@ -114,7 +114,7 @@
                 // Scroll to the row containing the point if this is a table view
                 NSIndexPath *indexPath = [(UITableView *)self.scrollView indexPathForRowAtPoint:firstResponderFrame.origin];
                 if (indexPath) {
-                    [(UITableView *)self.scrollView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionBottom animated:YES];
+                    [(UITableView *)self.scrollView scrollToRowAtIndexPath:indexPath atScrollPosition:UITableViewScrollPositionMiddle animated:YES];
                 } else {
                     // Fall back plan
                     [self.scrollView scrollRectToVisible:firstResponderFrame animated:YES];
