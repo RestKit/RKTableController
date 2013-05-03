@@ -45,7 +45,8 @@ typedef void (^RKFetchedResultsTableViewScrollViewBlock)(UIScrollView *scrollVie
 @property (nonatomic, weak) id<RKFetchedResultsTableControllerDelegate> delegate;
 
 // Fetched Results Controller
-@property (nonatomic, strong) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, strong) NSManagedObjectContext *objectRequestOperationContext;
+@property (nonatomic, strong) NSManagedObjectContext *fetchedResultsControllerContext;
 @property (nonatomic, weak) id<RKManagedObjectCaching> managedObjectCache;
 @property (nonatomic, strong) NSArray *fetchRequestBlocks; // An array of blocks for determining the fetch request for a URL
 @property (nonatomic, strong) NSURLRequest *request;

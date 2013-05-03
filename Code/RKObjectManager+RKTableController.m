@@ -36,7 +36,8 @@
 {
     RKFetchedResultsTableController *tableController = [RKFetchedResultsTableController tableControllerForTableViewController:tableViewController];
     tableController.responseDescriptors = self.responseDescriptors;
-    tableController.managedObjectContext = self.managedObjectStore.persistentStoreManagedObjectContext;
+    tableController.fetchedResultsControllerContext = self.managedObjectStore.mainQueueManagedObjectContext;
+    tableController.objectRequestOperationContext = self.managedObjectStore.persistentStoreManagedObjectContext;
     tableController.managedObjectCache = self.managedObjectStore.managedObjectCache;
     tableController.operationQueue = self.operationQueue;
     tableController.fetchRequestBlocks = self.fetchRequestBlocks;
@@ -47,8 +48,8 @@
 {
     RKFetchedResultsTableController *tableController = [RKFetchedResultsTableController tableControllerWithTableView:tableView forViewController:viewController];
     tableController.responseDescriptors = self.responseDescriptors;
-    tableController.managedObjectContext = self.managedObjectStore.persistentStoreManagedObjectContext;
-    tableController.managedObjectCache = self.managedObjectStore.managedObjectCache;
+    tableController.fetchedResultsControllerContext = self.managedObjectStore.mainQueueManagedObjectContext;
+    tableController.objectRequestOperationContext = self.managedObjectStore.persistentStoreManagedObjectContext;
     tableController.operationQueue = self.operationQueue;
     tableController.fetchRequestBlocks = self.fetchRequestBlocks;
     return tableController;

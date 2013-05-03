@@ -261,7 +261,7 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
 {
     RKHTTPRequestOperation *requestOperation = [[[self HTTPOperationClass] alloc] initWithRequest:request];
     RKManagedObjectRequestOperation *operation = [[RKManagedObjectRequestOperation alloc] initWithHTTPRequestOperation:requestOperation responseDescriptors:self.responseDescriptors];
-    operation.managedObjectContext = self.managedObjectContext;
+    operation.managedObjectContext = self.objectRequestOperationContext;
     operation.fetchRequestBlocks = self.fetchRequestBlocks;
     operation.managedObjectCache = self.managedObjectCache;
     operation.deletesOrphanedObjects = self.deletesOrphanedObjects;
@@ -290,9 +290,9 @@ static BOOL RKShouldReloadRowForManagedObjectWithCellMapping(NSManagedObject *ma
         [fetchRequest setSortDescriptors:self.sortDescriptors];
     }
     
-    RKLogTrace(@"Loading fetched results table view from managed object context %@ with fetch request: %@", self.managedObjectContext, fetchRequest);
+    RKLogTrace(@"Loading fetched results table view from managed object context %@ with fetch request: %@", self.fetchedResultsControllerContext, fetchRequest);
     NSFetchedResultsController *fetchedResultsController = [[NSFetchedResultsController alloc] initWithFetchRequest:fetchRequest
-                                                                                               managedObjectContext:self.managedObjectContext
+                                                                                               managedObjectContext:self.fetchedResultsControllerContext
                                                                                                  sectionNameKeyPath:self.sectionNameKeyPath
                                                                                                           cacheName:self.cacheName];
     self.fetchedResultsController = fetchedResultsController;
