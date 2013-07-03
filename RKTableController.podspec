@@ -15,5 +15,21 @@ Pod::Spec.new do |s|
   s.source_files = 'Code/*.{h,m}'
   s.ios.framework    = 'QuartzCore'
   
-  s.dependency 'RestKit', '>= 0.20.0dev'
+  s.dependency 'RestKit', '~> 0.20.0'
+  
+  s.prefix_header_contents = <<-EOS
+#import <Availability.h>
+
+#define _AFNETWORKING_PIN_SSL_CERTIFICATES_
+
+#if __IPHONE_OS_VERSION_MIN_REQUIRED
+  #import <SystemConfiguration/SystemConfiguration.h>
+  #import <MobileCoreServices/MobileCoreServices.h>
+  #import <Security/Security.h>
+#else
+  #import <SystemConfiguration/SystemConfiguration.h>
+  #import <CoreServices/CoreServices.h>
+  #import <Security/Security.h>
+#endif
+EOS
 end
