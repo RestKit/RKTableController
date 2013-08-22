@@ -31,5 +31,9 @@ Pod::Spec.new do |s|
   #import <CoreServices/CoreServices.h>
   #import <Security/Security.h>
 #endif
+
+#ifdef COCOAPODS_POD_AVAILABLE_RestKit_CoreData
+    #import <CoreData/CoreData.h>
+#endif
 EOS
 end
