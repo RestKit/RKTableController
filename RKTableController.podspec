@@ -15,7 +15,7 @@ Pod::Spec.new do |s|
   s.source_files = 'Code/*.{h,m}'
   s.ios.framework    = 'QuartzCore'
   
-  s.dependency 'RestKit', '~> 0.20.0'
+  s.dependency 'RestKit', '~> 0.22.0'
   
   s.prefix_header_contents = <<-EOS
 #import <Availability.h>
